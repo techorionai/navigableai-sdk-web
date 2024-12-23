@@ -19,8 +19,6 @@ const copyUmdToBuilds = async () => {
       fs.copyFile("README.md", `${buildFolder}/README.md`),
     ]);
 
-    await Promise.all([fs.rm("./dist/index.js"), fs.rm("./dist/index.js.map")]);
-
     console.log(`Builds for version ${version} copied successfully`);
   } catch (error) {
     console.error(error);

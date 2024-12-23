@@ -94,20 +94,6 @@ document.querySelector("#toggle-button")?.addEventListener("click", () => {
 });
 ```
 
-## Via NPM
-
-```bash
-npm install navigableai-web
-```
-
-### Import the Navigable AI Chat SDK
-
-```javascript
-import { NavigableAI } from "navigableai-web";
-```
-
----
-
 ## NavigableAI Options
 
 The `NavigableAIOptions` interface defines all the configurable options you can pass when instantiating the `NavigableAI` class. These options control the behavior and appearance of the AI assistant.
@@ -239,6 +225,14 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
   }
   ```
 
+### 8. `darkTheme` (boolean) **Optional**
+
+- **Description**: Whether to use the dark theme for the chat window. Default is `false`.
+
+### 9. `markdown` (boolean) **Optional**
+
+- **Description**: Whether to use Markdown in the chat window. Default is `false`. If set to `true`, the [`showdown`](https://showdownjs.com/) library will be loaded to render markdown.
+
 ---
 
 ### Summary of Instantiation Options
@@ -255,59 +249,92 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
 
 ## Color Customization
 
-You can customize the appearance of the chat window by overriding CSS variables in your styles. The SDK uses a set of CSS variables (defined in the `:root` selector) to manage colors for various elements. By defining these variables in your styles, you can fully control the visual theme of the chat window to match your brand or design preferences.
+The appearance of various elements within the Navigable AI chat window can be customized through CSS variables. You can override these variables in your stylesheets to modify the colors for different parts of the chat interface.
 
-### CSS Variables
+Here is the updated table of CSS variables used for color customization:
 
-Here are the available CSS variables and their descriptions:
+| **CSS Variable**                               | **Description**                                            | **Default Value** |
+| ---------------------------------------------- | ---------------------------------------------------------- | ----------------- |
+| `--ai-chat-window-color-outline`               | Outline color of the chat window.                          | `#cccccc75`       |
+| `--ai-chat-window-color-border`                | Border color around the chat window.                       | `#3782e2`         |
+| `--ai-chat-window-color-header`                | Background color of the chat window header.                | `white`           |
+| `--ai-chat-window-color-bg-header`             | Background color of the header area of the chat window.    | `#3782e2`         |
+| `--ai-chat-window-color-bg-close-button`       | Background color of the close button.                      | `transparent`     |
+| `--ai-chat-window-color-close-button`          | Color of the close button icon.                            | `white`           |
+| `--ai-chat-window-color-bg-close-button-hover` | Background color of the close button on hover.             | `#6ba4f0`         |
+| `--ai-chat-window-color-message-loader`        | Loader color (for loading state in the chat).              | `#3782e2`         |
+| `--ai-chat-window-color-message-user`          | Text color for the user messages.                          | `black`           |
+| `--ai-chat-window-color-bg-message-user`       | Background color of the user's messages.                   | `#daf5ff`         |
+| `--ai-chat-window-color-message-assistant`     | Text color for the assistant messages.                     | `black`           |
+| `--ai-chat-window-color-bg-message-assistant`  | Background color of the assistant's messages.              | `#e7e7e7`         |
+| `--ai-chat-window-color-border-action`         | Border color for action buttons (e.g., "Contact Support"). | `#3782e2`         |
+| `--ai-chat-window-color-message-error`         | Text color for error messages.                             | `black`           |
+| `--ai-chat-window-color-bg-message-error`      | Background color for error messages.                       | `#ffd6d6`         |
+| `--ai-chat-window-color-bg-input-field`        | Background color of the input field for user messages.     | `transparent`     |
+| `--ai-chat-window-color-bg-send-button`        | Background color of the send button.                       | `white`           |
+| `--ai-chat-window-color-send-button`           | Color of the send button icon.                             | `#3782e2`         |
+| `--ai-chat-window-color-scrollbar-track`       | Background color of the scrollbar track.                   | `#f0f0f0`         |
+| `--ai-chat-window-color-scrollbar-thumb`       | Color of the scrollbar thumb (the draggable part).         | `#888`            |
+| `--ai-chat-window-color-scrollbar-thumb-hover` | Color of the scrollbar thumb when hovered.                 | `#555`            |
 
-| Variable                                       | Default Value | Description                                    |
-| ---------------------------------------------- | ------------- | ---------------------------------------------- |
-| `--ai-chat-window-color-outline`               | `#cccccc75`   | Outline color for focus and hover states.      |
-| `--ai-chat-window-color-border`                | `#3782e2`     | Border color for the chat window.              |
-| `--ai-chat-window-color-header`                | `white`       | Text color for the header.                     |
-| `--ai-chat-window-color-bg-header`             | `#3782e2`     | Background color for the header.               |
-| `--ai-chat-window-color-close-button`          | `white`       | Icon color for the close button.               |
-| `--ai-chat-window-color-bg-close-button-hover` | `#6ba4f0`     | Background color of the close button on hover. |
-| `--ai-chat-window-color-message-loader`        | `#3782e2`     | Loader animation color for messages.           |
-| `--ai-chat-window-color-message-user`          | `black`       | Text color for user messages.                  |
-| `--ai-chat-window-color-bg-message-user`       | `#daf5ff`     | Background color for user messages.            |
-| `--ai-chat-window-color-message-assistant`     | `black`       | Text color for assistant messages.             |
-| `--ai-chat-window-color-bg-message-assistant`  | `#e7e7e7`     | Background color for assistant messages.       |
-| `--ai-chat-window-color-border-action`         | `#3782e2`     | Border color for action buttons.               |
-| `--ai-chat-window-color-message-error`         | `black`       | Text color for error messages.                 |
-| `--ai-chat-window-color-bg-message-error`      | `#ffd6d6`     | Background color for error messages.           |
-| `--ai-chat-window-color-send-button`           | `#3782e2`     | Color for the send button.                     |
-| `--ai-chat-window-color-scrollbar-thumb`       | `#888`        | Color for the scrollbar thumb.                 |
-| `--ai-chat-window-color-scrollbar-thumb-hover` | `#555`        | Color for the scrollbar thumb on hover.        |
+### How to Customize Colors
 
-#### Example: Customizing Colors
-
-To customize the chat window colors, define these variables in your CSS file or `<style>` tag. For example:
+To customize the colors, you simply need to override these CSS variables in your stylesheet, targeting the root element. For example:
 
 ```css
+/* Light mode */
 :root {
-  --ai-chat-window-color-border: #ff5733; /* Change border to a vibrant orange */
-  --ai-chat-window-color-bg-header: #333; /* Darken the header background */
-  --ai-chat-window-color-header: #fff; /* Ensure header text is readable */
-  --ai-chat-window-color-bg-message-user: #f0e68c; /* Light yellow for user messages */
-  --ai-chat-window-color-bg-message-assistant: #add8e6; /* Light blue for assistant messages */
+  --ai-chat-window-color-border: #3782e2;
+  --ai-chat-window-color-bg-header: #ffffff;
+  --ai-chat-window-color-bg-message-user: #daf5ff;
+  --ai-chat-window-color-bg-message-assistant: #e7e7e7;
+}
+
+/* Dark mode */
+.ai-chat-window-dark-theme {
+  --ai-chat-window-color-border: #ff6347;
+  --ai-chat-window-color-bg-header: #333333;
+  --ai-chat-window-color-bg-message-user: #1e1e1e;
+  --ai-chat-window-color-bg-message-assistant: #444444;
 }
 ```
 
-### Applying the Custom CSS
+This will update the chat window's colors according to your preferences.
 
-Make sure this CSS is loaded in your project, either through a linked stylesheet or an inline `<style>` tag in your HTML file:
+## Theme Toggling
 
-```html
-<head>
-  <link rel="stylesheet" href="styles.css" />
-</head>
+The Navigable AI chat window includes methods to toggle between light and dark themes dynamically. These methods allow developers to programmatically switch or determine the current theme state. The theme is applied by toggling a CSS class (`ai-chat-window-dark-theme`) on the chat window's root element.
+
+### Theme Methods
+
+Here are the available methods for managing themes:
+
+| Method      | Description                                                                     |
+| ----------- | ------------------------------------------------------------------------------- |
+| `isLight()` | Returns `true` if the current theme is light, otherwise `false`.                |
+| `light()`   | Sets the theme to light mode by removing the `ai-chat-window-dark-theme` class. |
+| `dark()`    | Sets the theme to dark mode by adding the `ai-chat-window-dark-theme` class.    |
+| `toggle()`  | Toggles between light and dark themes based on the current state.               |
+
+### Usage Example
+
+```javascript
+// Check if the current theme is light
+if (navigableai.chatWindow.theme.isLight()) {
+  console.log("The theme is currently light.");
+}
+
+// Switch to dark mode
+navigableai.chatWindow.theme.dark();
+
+// Switch to light mode
+navigableai.chatWindow.theme.light();
+
+// Toggle between light and dark mode
+navigableai.chatWindow.theme.toggle();
 ```
 
-#### Live Preview
-
-The changes should reflect immediately in the chat window after the styles are applied.
+These methods make it easy to provide a dynamic and user-friendly theming experience in your application.
 
 ## API Customization and Signature Management
 

@@ -29,3 +29,9 @@ document.querySelector("#toggle-button")?.addEventListener("click", () => {
   console.log("Button toggled");
   navigableai.chatWindow.toggle();
 });
+
+document.onreadystatechange = () => {
+  if (document.readyState === "complete") {
+    navigableai.chatWindow.open();
+  }
+};

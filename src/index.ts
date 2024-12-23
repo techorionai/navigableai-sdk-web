@@ -132,6 +132,10 @@ interface NavigableAIOptions {
      */
     loader?: string;
   };
+  /**
+   * Enable dark mode for the chat window.
+   */
+  darkTheme?: boolean;
 }
 
 class NavigableAI {
@@ -181,6 +185,7 @@ class NavigableAI {
       // Check and set identifier
       if (identifier && this.identifier !== identifier) {
         this.identifier = identifier;
+        this.api.getMessages.run();
       }
 
       this.chatWindow.set();
@@ -477,6 +482,39 @@ class NavigableAI {
         this.api.sendMessage.run(input.value);
       },
     },
+    theme: {
+      isLight: () => {
+        const el = this.chatWindow.get();
+        if (!el) {
+          return false;
+        }
+        return !el.classList.contains("ai-chat-window-dark-theme");
+      },
+      light: () => {
+        const el = this.chatWindow.get();
+        if (!el) {
+          return null;
+        }
+
+        el.classList.remove("ai-chat-window-dark-theme");
+      },
+      dark: () => {
+        const el = this.chatWindow.get();
+        if (!el) {
+          return null;
+        }
+
+        el.classList.add("ai-chat-window-dark-theme");
+      },
+      toggle: () => {
+        const isLight = this.chatWindow.theme.isLight();
+        if (isLight) {
+          this.chatWindow.theme.dark();
+        } else {
+          this.chatWindow.theme.light();
+        }
+      },
+    },
   };
   public api = {
     sendMessage: {
@@ -593,7 +631,37 @@ class NavigableAI {
 
         const data = res.data as IChatGetMessageResponse;
 
-        this.chatWindow.messages = data.data;
+        // this.chatWindow.messages = data.data;
+        this.chatWindow.messages = [
+          {
+            sender: "USER",
+            content: "Hi",
+            new: false,
+            createdAt: new Date(),
+            action: null,
+          },
+          {
+            sender: "ASSISTANT",
+            content: "Hi, How may I help you today?",
+            new: false,
+            createdAt: new Date(),
+            action: null,
+          },
+          {
+            sender: "ASSISTANT-LOADING",
+            content: "Hi",
+            new: false,
+            createdAt: new Date(),
+            action: null,
+          },
+          {
+            sender: "ERROR",
+            content: this.chatWindow.defaults.error,
+            new: false,
+            createdAt: new Date(),
+            action: null,
+          },
+        ];
         this.chatWindow.set();
 
         return data.data;
@@ -756,6 +824,17 @@ class NavigableAI {
     },
     converter: null as any,
   };
+  private waitForDOM = () => {
+    return new Promise((resolve) => {
+      if (document.readyState === "complete") {
+        resolve(document);
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          resolve(document);
+        });
+      }
+    });
+  };
 
   constructor(options: NavigableAIOptions) {
     if (!options.id) {
@@ -763,81 +842,89 @@ class NavigableAI {
       return;
     }
 
-    const el = document.getElementById(options.id);
-    if (!el) {
-      this.console.error("div not found with id", options.id);
-      return;
-    }
+    (async () => {
+      await this.waitForDOM();
 
-    if (options.markdown) {
-      this.chatWindow.markdown = true;
-      this.showdown.load();
-    }
-
-    this.chatWindow.id = options.id;
-
-    if (options.sharedSecretKeyConfig) {
-      this.sharedSecretKeyConfig = options.sharedSecretKeyConfig;
-    }
-
-    if (options.apiConfig) {
-      if (options.apiConfig.sendMessage) {
-        this.api.sendMessage.url = options.apiConfig.sendMessage.url;
-        this.api.sendMessage.method = options.apiConfig.sendMessage.method;
+      const el = document.getElementById(options.id);
+      if (!el) {
+        this.console.error("div not found with id", options.id);
+        return;
       }
 
-      if (options.apiConfig.getMessages) {
-        this.api.getMessages.url = options.apiConfig.getMessages.url;
-        this.api.getMessages.method = options.apiConfig.getMessages.method;
+      if (options.markdown) {
+        this.chatWindow.markdown = true;
+        this.showdown.load();
       }
-    }
 
-    if (options.identifier) {
-      if (this.identifier !== options.identifier) {
-        this.setIdentifier(options.identifier);
+      this.chatWindow.id = options.id;
+
+      if (options.sharedSecretKeyConfig) {
+        this.sharedSecretKeyConfig = options.sharedSecretKeyConfig;
+      }
+
+      if (options.apiConfig) {
+        if (options.apiConfig.sendMessage) {
+          this.api.sendMessage.url = options.apiConfig.sendMessage.url;
+          this.api.sendMessage.method = options.apiConfig.sendMessage.method;
+        }
+
+        if (options.apiConfig.getMessages) {
+          this.api.getMessages.url = options.apiConfig.getMessages.url;
+          this.api.getMessages.method = options.apiConfig.getMessages.method;
+        }
+      }
+
+      if (options.identifier) {
+        if (this.identifier !== options.identifier) {
+          this.setIdentifier(options.identifier);
+        } else {
+          this.getIdentifierFromLocalStorage();
+        }
       } else {
         this.getIdentifierFromLocalStorage();
       }
-    } else {
-      this.getIdentifierFromLocalStorage();
-    }
 
-    if (this.identifier) {
-      this.api.getMessages.run();
-    }
+      if (this.identifier) {
+        this.api.getMessages.run();
+      }
 
-    if (options.actions) {
-      this.actions = options.actions;
-    }
+      if (options.actions) {
+        this.actions = options.actions;
+      }
 
-    if (options.autoRunActions) {
-      this.autoRunActions = options.autoRunActions;
-    }
+      if (options.autoRunActions) {
+        this.autoRunActions = options.autoRunActions;
+      }
 
-    if (options.defaults) {
-      if (options.defaults.error) {
-        this.chatWindow.defaults.error = options.defaults.error;
+      if (options.defaults) {
+        if (options.defaults.error) {
+          this.chatWindow.defaults.error = options.defaults.error;
+        }
+        if (options.defaults.title) {
+          this.chatWindow.defaults.title = options.defaults.title;
+        }
+        if (options.defaults.inputPlaceholder) {
+          this.chatWindow.defaults.inputPlaceholder =
+            options.defaults.inputPlaceholder;
+        }
+        if (options.defaults.logo) {
+          this.chatWindow.defaults.logo = options.defaults.logo;
+        }
+        if (options.defaults.closeIcon) {
+          this.chatWindow.defaults.closeIcon = options.defaults.closeIcon;
+        }
+        if (options.defaults.sendIcon) {
+          this.chatWindow.defaults.sendIcon = options.defaults.sendIcon;
+        }
+        if (options.defaults.loader) {
+          this.chatWindow.defaults.loader = options.defaults.loader;
+        }
       }
-      if (options.defaults.title) {
-        this.chatWindow.defaults.title = options.defaults.title;
+
+      if (options.darkTheme) {
+        this.chatWindow.theme.dark();
       }
-      if (options.defaults.inputPlaceholder) {
-        this.chatWindow.defaults.inputPlaceholder =
-          options.defaults.inputPlaceholder;
-      }
-      if (options.defaults.logo) {
-        this.chatWindow.defaults.logo = options.defaults.logo;
-      }
-      if (options.defaults.closeIcon) {
-        this.chatWindow.defaults.closeIcon = options.defaults.closeIcon;
-      }
-      if (options.defaults.sendIcon) {
-        this.chatWindow.defaults.sendIcon = options.defaults.sendIcon;
-      }
-      if (options.defaults.loader) {
-        this.chatWindow.defaults.loader = options.defaults.loader;
-      }
-    }
+    })();
   }
 }
 

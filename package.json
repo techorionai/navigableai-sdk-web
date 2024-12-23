@@ -2,16 +2,30 @@
   "name": "navigableai-web",
   "version": "0.1.0",
   "description": "Web Browser SDK for Navigable AI.",
-  "main": "./dist/index.esm.js",
+  "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
+  "browser": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dist/styles.css"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "browser": "./dist/index.js"
+    },
+    "./dist/styles.css": {
+      "import": "./dist/styles.css",
+      "require": "./dist/styles.css",
+      "browser": "./dist/styles.css"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "copy-css": "cp ./src/styles.css ./dist/styles.css",
-    "build": "npm rebuild typescript && tsc --project tsconfig.json && npm run copy-css && rollup -c && node utils/pack.js",
+    "build": "npm rebuild typescript && tsc --project tsconfig.json && rollup -c && npm run copy-css && node utils/pack.js",
     "dev": "nodemon --exec \"npm run build\" --watch src/index.ts --watch src/styles.css"
   },
   "author": "TECHORION AI LLP",

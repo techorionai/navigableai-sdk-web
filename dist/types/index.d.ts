@@ -119,6 +119,10 @@ interface NavigableAIOptions {
          */
         loader?: string;
     };
+    /**
+     * Enable dark mode for the chat window.
+     */
+    darkTheme?: boolean;
 }
 declare class NavigableAI {
     private sharedSecretKeyConfig;
@@ -165,6 +169,12 @@ declare class NavigableAI {
         messageForm: {
             get: () => HTMLFormElement | null;
             onsubmit: () => null | undefined;
+        };
+        theme: {
+            isLight: () => boolean;
+            light: () => null | undefined;
+            dark: () => null | undefined;
+            toggle: () => void;
         };
     };
     api: {
@@ -233,6 +243,7 @@ declare class NavigableAI {
         };
     };
     private showdown;
+    private waitForDOM;
     constructor(options: NavigableAIOptions);
 }
 export { NavigableAI };
