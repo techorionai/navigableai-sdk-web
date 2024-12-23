@@ -1,0 +1,29 @@
+{
+  "name": "navigableai-web",
+  "version": "0.1.0",
+  "description": "Web Browser SDK for Navigable AI.",
+  "main": "./dist/index.esm.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-css": "cp ./src/styles.css ./dist/styles.css",
+    "build": "npm rebuild typescript && tsc --project tsconfig.json && npm run copy-css && rollup -c && node utils/pack.js",
+    "dev": "nodemon --exec \"npm run build\" --watch src/index.ts --watch src/styles.css"
+  },
+  "author": "TECHORION AI LLP",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@types/showdown": "^2.0.6",
+    "nodemon": "^3.1.9",
+    "rollup": "^2.79.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "tsc": "^2.0.4",
+    "typescript": "^5.7.2"
+  }
+}
