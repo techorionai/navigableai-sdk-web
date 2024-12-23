@@ -16,6 +16,7 @@ const copyUmdToBuilds = async () => {
       fs.copyFile("./dist/index.js", `${buildFolder}/index.js`),
       fs.copyFile("./dist/index.js.map", `${buildFolder}/index.js.map`),
       fs.copyFile("./dist/styles.css", `${buildFolder}/styles.css`),
+      fs.copyFile("README.md", `${buildFolder}/README.md`),
     ]);
 
     await Promise.all([fs.rm("./dist/index.js"), fs.rm("./dist/index.js.map")]);
