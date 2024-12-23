@@ -323,7 +323,7 @@ navigableai.api.getMessages.request = (
   return this.request({
     method: this.api.getMessages.method as HTTPMethods,
     url: `${this.api.getMessages.url}?identifier=${identifier}`,
-    signaturePayload: identifier, // Used if shared secret key is enabled.
+    signaturePayload: identifier, // Used if shared secret key is enabled. Request handles this internally.
   });
 };
 ```
@@ -341,7 +341,7 @@ navigableai.api.sendMessage.request = async (
     method: this.api.sendMessage.method as HTTPMethods,
     url: this.api.sendMessage.url,
     body,
-    signaturePayload: message, // Used if shared secret key is enabled.
+    signaturePayload: message, // Used if shared secret key is enabled. Request handles this internally.
   });
 };
 ```
@@ -352,17 +352,14 @@ You can replace these default implementations with your custom logic as long as 
 
 Example:
 
-```typescript
-navigableai.api.getMessages.request = (identifier: string) => {
+```javascript
+navigableai.api.getMessages.request = (identifier) => {
   return fetch(`https://example.com/messages?user=${identifier}`, {
     method: "GET",
   }).then((response) => response.json());
 };
 
-navigableai.api.sendMessage.request = async (
-  message: string,
-  body: Record<string, any>
-) => {
+navigableai.api.sendMessage.request = async (message, body) => {
   return await fetch("https://example.com/send-message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
