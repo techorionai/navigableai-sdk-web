@@ -173,8 +173,6 @@ class NavigableAI {
       return el.style.display === "block";
     },
     open: (identifier?: string) => {
-      this.console.log("Open chat window");
-
       const el = this.chatWindow.get();
       if (!el) {
         return false;
@@ -250,7 +248,6 @@ class NavigableAI {
               const content = shouldRenderMarkdown
                 ? this.showdown.converter.makeHtml(message.content)
                 : message.content;
-              this.console.log("content", content);
               const messageStyle = shouldRenderMarkdown
                 ? ""
                 : "white-space: pre-wrap";
@@ -750,10 +747,7 @@ class NavigableAI {
           "https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js";
         script.onload = () => {
           this.showdown.converter = new (window as any).showdown.Converter();
-          this.console.log(
-            "Showdown loaded. Converter: ",
-            this.showdown.converter
-          );
+
           resolve((window as any).showdown);
         };
         script.onerror = () => reject(new Error("Failed to load Showdown"));
