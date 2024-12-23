@@ -17,16 +17,21 @@ The **Navigable AI Chat SDK** provides an easily embeddable and customizable cha
 
 To get started, include the required files in your project:
 
-### CSS
+### Via Navigable AI CDN
+
+#### CSS
 
 ```html
-<link rel="stylesheet" href="../dist/styles.css" />
+<link
+  rel="stylesheet"
+  href="https://www.navigable.ai/sdk-web/0.1.0/styles.css"
+/>
 ```
 
-### JavaScript
+#### JavaScript
 
 ```html
-<script src="../dist/index.js"></script>
+<script src="https://www.navigable.ai/sdk-web/0.1.0/index.js"></script>
 ```
 
 ---
