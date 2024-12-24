@@ -18,6 +18,7 @@ const navigableai = new NavigableAI({
     },
   },
   markdown: true,
+  // darkTheme: true,
 });
 
 document.querySelector("#open-button")?.addEventListener("click", () => {

@@ -251,27 +251,25 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
 
 The appearance of various elements within the Navigable AI chat window can be customized through CSS variables. You can override these variables in your stylesheets to modify the colors for different parts of the chat interface.
 
-Here is the updated table of CSS variables used for color customization:
-
 | **CSS Variable**                               | **Description**                                            | **Default Value** |
 | ---------------------------------------------- | ---------------------------------------------------------- | ----------------- |
-| `--ai-chat-window-color-outline`               | Outline color of the chat window.                          | `#cccccc75`       |
-| `--ai-chat-window-color-border`                | Border color around the chat window.                       | `#3782e2`         |
+| `--ai-chat-window-color-outline`               | Outline color of the chat window.                          | `#e7e7e775`       |
 | `--ai-chat-window-color-header`                | Background color of the chat window header.                | `white`           |
 | `--ai-chat-window-color-bg-header`             | Background color of the header area of the chat window.    | `#3782e2`         |
 | `--ai-chat-window-color-bg-close-button`       | Background color of the close button.                      | `transparent`     |
 | `--ai-chat-window-color-close-button`          | Color of the close button icon.                            | `white`           |
 | `--ai-chat-window-color-bg-close-button-hover` | Background color of the close button on hover.             | `#6ba4f0`         |
+| `--ai-chat-window-color-bg-messages`           | Background color of the messages section.                  | `#f6faff`         |
 | `--ai-chat-window-color-message-loader`        | Loader color (for loading state in the chat).              | `#3782e2`         |
 | `--ai-chat-window-color-message-user`          | Text color for the user messages.                          | `black`           |
-| `--ai-chat-window-color-bg-message-user`       | Background color of the user's messages.                   | `#daf5ff`         |
-| `--ai-chat-window-color-message-assistant`     | Text color for the assistant messages.                     | `black`           |
-| `--ai-chat-window-color-bg-message-assistant`  | Background color of the assistant's messages.              | `#e7e7e7`         |
+| `--ai-chat-window-color-bg-message-user`       | Background color of the user's messages.                   | `white`           |
+| `--ai-chat-window-color-message-assistant`     | Text color for the assistant messages.                     | `white`           |
+| `--ai-chat-window-color-bg-message-assistant`  | Background color of the assistant's messages.              | `#3782e2`         |
 | `--ai-chat-window-color-border-action`         | Border color for action buttons (e.g., "Contact Support"). | `#3782e2`         |
 | `--ai-chat-window-color-message-error`         | Text color for error messages.                             | `black`           |
 | `--ai-chat-window-color-bg-message-error`      | Background color for error messages.                       | `#ffd6d6`         |
-| `--ai-chat-window-color-bg-input-field`        | Background color of the input field for user messages.     | `transparent`     |
-| `--ai-chat-window-color-bg-send-button`        | Background color of the send button.                       | `white`           |
+| `--ai-chat-window-color-input-field`           | Text color of the input field for user messages.           | `black`           |
+| `--ai-chat-window-color-bg-input-field`        | Background color of the input field for user messages.     | `white`           |
 | `--ai-chat-window-color-send-button`           | Color of the send button icon.                             | `#3782e2`         |
 | `--ai-chat-window-color-scrollbar-track`       | Background color of the scrollbar track.                   | `#f0f0f0`         |
 | `--ai-chat-window-color-scrollbar-thumb`       | Color of the scrollbar thumb (the draggable part).         | `#888`            |
@@ -284,7 +282,6 @@ To customize the colors, you simply need to override these CSS variables in your
 ```css
 /* Light mode */
 :root {
-  --ai-chat-window-color-border: #3782e2;
   --ai-chat-window-color-bg-header: #ffffff;
   --ai-chat-window-color-bg-message-user: #daf5ff;
   --ai-chat-window-color-bg-message-assistant: #e7e7e7;
@@ -292,7 +289,6 @@ To customize the colors, you simply need to override these CSS variables in your
 
 /* Dark mode */
 .ai-chat-window-dark-theme {
-  --ai-chat-window-color-border: #ff6347;
   --ai-chat-window-color-bg-header: #333333;
   --ai-chat-window-color-bg-message-user: #1e1e1e;
   --ai-chat-window-color-bg-message-assistant: #444444;

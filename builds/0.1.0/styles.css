@@ -9,8 +9,8 @@
   --ai-chat-window-color-message-loader: #3782e2;
   --ai-chat-window-color-message-user: black;
   --ai-chat-window-color-bg-message-user: white;
-  --ai-chat-window-color-message-assistant: white;
-  --ai-chat-window-color-bg-message-assistant: #3782e2;
+  --ai-chat-window-color-message-assistant: black;
+  --ai-chat-window-color-bg-message-assistant: #e5edf8;
   --ai-chat-window-color-border-action: #3782e2;
   --ai-chat-window-color-bg-message-error: #ffd6d6;
   --ai-chat-window-color-message-error: black;
@@ -34,7 +34,7 @@
   --ai-chat-window-color-message-user: #d1d1d1;
   --ai-chat-window-color-bg-message-user: #2f2f2f;
   --ai-chat-window-color-message-assistant: white;
-  --ai-chat-window-color-bg-message-assistant: #3782e2;
+  --ai-chat-window-color-bg-message-assistant: #162941;
   --ai-chat-window-color-border-action: #3782e2;
   --ai-chat-window-color-bg-message-error: #ff4545;
   --ai-chat-window-color-message-error: white;
@@ -44,6 +44,10 @@
   --ai-chat-window-color-scrollbar-track: #333333;
   --ai-chat-window-color-scrollbar-thumb: #888888;
   --ai-chat-window-color-scrollbar-thumb-hover: #555555;
+}
+
+.ai-chat-window a {
+  color: #1d69da;
 }
 
 .ai-chat-window {
