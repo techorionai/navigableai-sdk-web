@@ -235,7 +235,9 @@ class NavigableAI {
         <div class="ai-chat-window-header">
           <div class="ai-chat-window-header-left">
             ${this.chatWindow.defaults.logo}
-            <h2 class="ai-chat-window-title" aria-label="Assistant">Assistant</h2>
+            <h2 class="ai-chat-window-title" aria-label="${
+              this.chatWindow.defaults.title
+            }">${this.chatWindow.defaults.title}</h2>
           </div>
           <div class="ai-chat-window-header-right">
             <button class="ai-chat-window-header-close" aria-label="Close">
