@@ -631,37 +631,7 @@ class NavigableAI {
 
         const data = res.data as IChatGetMessageResponse;
 
-        // this.chatWindow.messages = data.data;
-        this.chatWindow.messages = [
-          {
-            sender: "USER",
-            content: "Hi",
-            new: false,
-            createdAt: new Date(),
-            action: null,
-          },
-          {
-            sender: "ASSISTANT",
-            content: "Hi, How may I help you today?",
-            new: false,
-            createdAt: new Date(),
-            action: null,
-          },
-          {
-            sender: "ASSISTANT-LOADING",
-            content: "Hi",
-            new: false,
-            createdAt: new Date(),
-            action: null,
-          },
-          {
-            sender: "ERROR",
-            content: this.chatWindow.defaults.error,
-            new: false,
-            createdAt: new Date(),
-            action: null,
-          },
-        ];
+        this.chatWindow.messages = data.data;
         this.chatWindow.set();
 
         return data.data;

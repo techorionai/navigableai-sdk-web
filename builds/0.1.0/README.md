@@ -94,20 +94,6 @@ document.querySelector("#toggle-button")?.addEventListener("click", () => {
 });
 ```
 
-## Via NPM
-
-```bash
-npm install navigableai-web
-```
-
-### Import the Navigable AI Chat SDK
-
-```javascript
-import { NavigableAI } from "navigableai-web";
-```
-
----
-
 ## NavigableAI Options
 
 The `NavigableAIOptions` interface defines all the configurable options you can pass when instantiating the `NavigableAI` class. These options control the behavior and appearance of the AI assistant.
@@ -297,29 +283,58 @@ To customize the colors, you simply need to override these CSS variables in your
 
 ```css
 /* Light mode */
-@media (prefers-color-scheme: light) {
-  :root {
-    --ai-chat-window-color-border: #3782e2;
-    --ai-chat-window-color-bg-header: #ffffff;
-    --ai-chat-window-color-bg-message-user: #daf5ff;
-    --ai-chat-window-color-bg-message-assistant: #e7e7e7;
-  }
+:root {
+  --ai-chat-window-color-border: #3782e2;
+  --ai-chat-window-color-bg-header: #ffffff;
+  --ai-chat-window-color-bg-message-user: #daf5ff;
+  --ai-chat-window-color-bg-message-assistant: #e7e7e7;
 }
 
 /* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ai-chat-window-color-border: #ff6347;
-    --ai-chat-window-color-bg-header: #333333;
-    --ai-chat-window-color-bg-message-user: #1e1e1e;
-    --ai-chat-window-color-bg-message-assistant: #444444;
-  }
+.ai-chat-window-dark-theme {
+  --ai-chat-window-color-border: #ff6347;
+  --ai-chat-window-color-bg-header: #333333;
+  --ai-chat-window-color-bg-message-user: #1e1e1e;
+  --ai-chat-window-color-bg-message-assistant: #444444;
 }
 ```
 
 This will update the chat window's colors according to your preferences.
 
-### Light & Dark Theme
+## Theme Toggling
+
+The Navigable AI chat window includes methods to toggle between light and dark themes dynamically. These methods allow developers to programmatically switch or determine the current theme state. The theme is applied by toggling a CSS class (`ai-chat-window-dark-theme`) on the chat window's root element.
+
+### Theme Methods
+
+Here are the available methods for managing themes:
+
+| Method      | Description                                                                     |
+| ----------- | ------------------------------------------------------------------------------- |
+| `isLight()` | Returns `true` if the current theme is light, otherwise `false`.                |
+| `light()`   | Sets the theme to light mode by removing the `ai-chat-window-dark-theme` class. |
+| `dark()`    | Sets the theme to dark mode by adding the `ai-chat-window-dark-theme` class.    |
+| `toggle()`  | Toggles between light and dark themes based on the current state.               |
+
+### Usage Example
+
+```javascript
+// Check if the current theme is light
+if (navigableai.chatWindow.theme.isLight()) {
+  console.log("The theme is currently light.");
+}
+
+// Switch to dark mode
+navigableai.chatWindow.theme.dark();
+
+// Switch to light mode
+navigableai.chatWindow.theme.light();
+
+// Toggle between light and dark mode
+navigableai.chatWindow.theme.toggle();
+```
+
+These methods make it easy to provide a dynamic and user-friendly theming experience in your application.
 
 ## API Customization and Signature Management
 
