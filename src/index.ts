@@ -601,13 +601,15 @@ class NavigableAI {
         }
 
         this.chatWindow.assistantResponding = true;
-        this.chatWindow.addMessage({
-          sender: "USER",
-          content: message,
-          new: false,
-          createdAt: new Date(),
-          action: null,
-        });
+        if (!options?.functionCallId) {
+          this.chatWindow.addMessage({
+            sender: "USER",
+            content: message,
+            new: false,
+            createdAt: new Date(),
+            action: null,
+          });
+        }
         this.chatWindow.addMessage({
           sender: "ASSISTANT-LOADING",
           content: "",
@@ -634,6 +636,9 @@ class NavigableAI {
         const configuredFunctions = Object.keys(this.agentFunctions);
         if (configuredFunctions.length) {
           body.configuredFunctions = configuredFunctions;
+        }
+        if (options?.functionCallId) {
+          body.functionCallId = options.functionCallId;
         }
 
         const res = await this.api.sendMessage.request(message, body);
