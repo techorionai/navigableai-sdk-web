@@ -7,6 +7,12 @@ type HTTPMethods =
   | "HEAD"
   | "OPTIONS";
 
+type AgentFunction = (
+  args?: Record<string, any>
+) =>
+  | Promise<string | boolean>
+  | ((args?: Record<string, any>) => string | boolean);
+
 interface SharedSecretKeyConfig {
   /**
    * Shared secret key. Should be securely added on the client. Should be same as the one on your server.
@@ -33,7 +39,19 @@ interface APIUrlConfig {
   url: string;
 }
 
-interface IChatSendMessageResponse {
+export interface ToolCall {
+  id: string;
+  type: string;
+  function: {
+    name: string;
+    /**
+     * JSON string of arguments
+     */
+    arguments: string;
+  };
+}
+
+export interface IChatSendMessageResponse {
   statusCode: number;
   success: boolean;
   message: string;
@@ -42,6 +60,7 @@ interface IChatSendMessageResponse {
     assistantMessage: string;
     action: string | null;
     identifier: string;
+    toolCalls: ToolCall[];
   };
 }
 
@@ -51,7 +70,7 @@ interface IChatGetMessageResponse {
   message: string;
   errors?: Record<string, string>;
   data: {
-    sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR";
+    sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
     content: string;
     new: boolean;
     createdAt: Date;
@@ -95,6 +114,9 @@ interface NavigableAIOptions {
      */
     getMessages?: APIUrlConfig;
   };
+  /**
+   * Navigation actions to be suggested by the assistant.
+   */
   actions?: Record<string, Function>;
   /**
    * Automatically run an action suggested by the assistant.
@@ -102,6 +124,13 @@ interface NavigableAIOptions {
    * @default false
    */
   autoRunActions?: boolean;
+  /**
+   * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
+   */
+  agentFunctions?: Record<string, AgentFunction>;
+  /**
+   * Default values for the chat window.
+   */
   defaults?: {
     /**
      * Error message to be shown if the request fails.
@@ -518,9 +547,51 @@ class NavigableAI {
       },
     },
   };
+  public agentFunctionCall = async (toolCall: ToolCall) => {
+    const functionName = toolCall.function.name;
+    const args = toolCall.function.arguments;
+
+    if (!this.agentFunctions[functionName]) {
+      this.console.error("Function not found: " + functionName);
+      return;
+    }
+
+    try {
+      const parsedArgs = JSON.parse(args);
+      const result = await this.agentFunctions[functionName](parsedArgs);
+
+      if (typeof result === "string") {
+        this.api.sendMessage.run(result, {
+          functionCallId: toolCall.id,
+        });
+      } else if (typeof result === "boolean") {
+        this.api.sendMessage.run(result.toString(), {
+          functionCallId: toolCall.id,
+        });
+      } else {
+        throw new Error("Function Response must be a string or boolean");
+      }
+    } catch (error) {
+      this.console.error(error);
+      if (error instanceof Error) {
+        this.api.sendMessage.run(error.message, {
+          functionCallId: toolCall.id,
+        });
+      } else {
+        this.api.sendMessage.run("Error: An unknown error occurred", {
+          functionCallId: toolCall.id,
+        });
+      }
+    }
+  };
   public api = {
     sendMessage: {
-      run: async (message: string) => {
+      run: async (
+        message: string,
+        options?: {
+          functionCallId?: string;
+        }
+      ) => {
         if (!message) {
           throw new Error("Message is required");
         }
@@ -555,6 +626,10 @@ class NavigableAI {
         const configuredActions = Object.keys(this.actions);
         if (configuredActions.length) {
           body.configuredActions = configuredActions;
+        }
+        const configuredFunctions = Object.keys(this.agentFunctions);
+        if (configuredFunctions.length) {
+          body.configuredFunctions = configuredFunctions;
         }
 
         const res = await this.api.sendMessage.request(message, body);
@@ -598,6 +673,12 @@ class NavigableAI {
           this.autoRunActions
         ) {
           this.actions[data.data.action]();
+        }
+
+        if (data.data.toolCalls && data.data.toolCalls.length > 0) {
+          data.data.toolCalls.forEach((toolCall) => {
+            this.agentFunctionCall(toolCall);
+          });
         }
 
         return data.data;
@@ -652,7 +733,14 @@ class NavigableAI {
     },
   };
   private autoRunActions: boolean = false;
+  /**
+   * Navigation actions to be suggested by the assistant.
+   */
   public actions = {} as Record<string, Function>;
+  /**
+   * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
+   */
+  public agentFunctions = {} as Record<string, AgentFunction>;
 
   private arrayBufferToHex = async (buffer: ArrayBuffer): Promise<string> => {
     return new Promise((resolve) => {
@@ -866,6 +954,10 @@ class NavigableAI {
 
       if (options.autoRunActions) {
         this.autoRunActions = options.autoRunActions;
+      }
+
+      if (options.agentFunctions) {
+        this.agentFunctions = options.agentFunctions;
       }
 
       if (options.defaults) {

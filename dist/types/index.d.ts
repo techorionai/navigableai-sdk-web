@@ -1,4 +1,5 @@
 type HTTPMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
+type AgentFunction = (args?: Record<string, any>) => Promise<string | boolean> | ((args?: Record<string, any>) => string | boolean);
 interface SharedSecretKeyConfig {
     /**
      * Shared secret key. Should be securely added on the client. Should be same as the one on your server.
@@ -23,7 +24,18 @@ interface APIUrlConfig {
      */
     url: string;
 }
-interface IChatSendMessageResponse {
+export interface ToolCall {
+    id: string;
+    type: string;
+    function: {
+        name: string;
+        /**
+         * JSON string of arguments
+         */
+        arguments: string;
+    };
+}
+export interface IChatSendMessageResponse {
     statusCode: number;
     success: boolean;
     message: string;
@@ -32,6 +44,7 @@ interface IChatSendMessageResponse {
         assistantMessage: string;
         action: string | null;
         identifier: string;
+        toolCalls: ToolCall[];
     };
 }
 interface IChatGetMessageResponse {
@@ -40,7 +53,7 @@ interface IChatGetMessageResponse {
     message: string;
     errors?: Record<string, string>;
     data: {
-        sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR";
+        sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
         content: string;
         new: boolean;
         createdAt: Date;
@@ -82,6 +95,9 @@ interface NavigableAIOptions {
          */
         getMessages?: APIUrlConfig;
     };
+    /**
+     * Navigation actions to be suggested by the assistant.
+     */
     actions?: Record<string, Function>;
     /**
      * Automatically run an action suggested by the assistant.
@@ -89,6 +105,13 @@ interface NavigableAIOptions {
      * @default false
      */
     autoRunActions?: boolean;
+    /**
+     * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
+     */
+    agentFunctions?: Record<string, AgentFunction>;
+    /**
+     * Default values for the chat window.
+     */
     defaults?: {
         /**
          * Error message to be shown if the request fails.
@@ -177,12 +200,16 @@ declare class NavigableAI {
             toggle: () => void;
         };
     };
+    agentFunctionCall: (toolCall: ToolCall) => Promise<void>;
     api: {
         sendMessage: {
-            run: (message: string) => Promise<{
+            run: (message: string, options?: {
+                functionCallId?: string;
+            }) => Promise<{
                 assistantMessage: string;
                 action: string | null;
                 identifier: string;
+                toolCalls: ToolCall[];
             } | null>;
             request: (message: string, body?: Record<string, any>) => Promise<{
                 data: IChatSendMessageResponse;
@@ -192,7 +219,7 @@ declare class NavigableAI {
         };
         getMessages: {
             run: () => Promise<{
-                sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR";
+                sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
                 content: string;
                 new: boolean;
                 createdAt: Date;
@@ -206,7 +233,14 @@ declare class NavigableAI {
         };
     };
     private autoRunActions;
+    /**
+     * Navigation actions to be suggested by the assistant.
+     */
     actions: Record<string, Function>;
+    /**
+     * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
+     */
+    agentFunctions: Record<string, AgentFunction>;
     private arrayBufferToHex;
     generateSignature: (payload: string) => Promise<string | null>;
     request: (config: RequestConfig) => Promise<{
