@@ -192,6 +192,10 @@
   box-shadow: 0px 0px 2px 1px var(--ai-chat-window-color-outline);
 }
 
+.ai-chat-window-message div * {
+  white-space: normal;
+}
+
 .ai-chat-window-message p,
 .ai-chat-window-message ol,
 .ai-chat-window-message ul,
