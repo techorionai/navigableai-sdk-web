@@ -551,13 +551,17 @@ class NavigableAI {
     const functionName = toolCall.function.name;
     const args = toolCall.function.arguments;
 
-    if (!this.agentFunctions[functionName]) {
-      this.console.error("Function not found: " + functionName);
-      return;
-    }
-
     try {
       const parsedArgs = JSON.parse(args);
+
+      if (
+        !this.agentFunctions[functionName] ||
+        typeof this.agentFunctions[functionName] !== "function"
+      ) {
+        this.console.error("Function not found: " + functionName);
+        throw new Error(`Function ${functionName} must be a function`);
+      }
+
       const result = await this.agentFunctions[functionName](parsedArgs);
 
       if (typeof result === "string") {
