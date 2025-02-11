@@ -88,7 +88,11 @@ interface NavigableAIOptions {
   /**
    * HTML id of the div to render the chat window.
    */
-  id: string;
+  id?: string;
+  /**
+   * Your agent embed ID.
+   */
+  embedId?: string;
   /**
    * Unique identifier of your user.
    */
@@ -160,15 +164,33 @@ interface NavigableAIOptions {
      * Loader for the chat window message when the assistant response is loading. HTML string. Default is a dots animation.
      */
     loader?: string;
+    /**
+     * Button for the chat window. HTML string. Default is a button.
+     */
+    widgetButton?: string;
   };
   /**
    * Enable dark mode for the chat window.
    */
   darkTheme?: boolean;
+  /**
+   * Disable the widget button in the chat window. Default is false.
+   */
+  widgetButtonDisabled?: boolean;
+  /**
+   * Position of the widget button in the chat window. Default is "bottom-right".
+   */
+  widgetButtonPosition?: "bottom-right" | "bottom-left";
 }
+
+const ENDPOINTS = {
+  CHAT: "https://www.navigable.ai/api/embed/v1/chat",
+};
 
 class NavigableAI {
   private sharedSecretKeyConfig: SharedSecretKeyConfig | undefined = undefined;
+  public elementId: string = "navigableai-chat-window";
+  public embedId: string | undefined = undefined;
   public identifier: string | undefined = undefined;
   public setIdentifier = (identifier: string) => {
     this.identifier = identifier;
@@ -179,6 +201,47 @@ class NavigableAI {
     if (identifier) {
       this.identifier = identifier;
     }
+  };
+  public widget = {
+    enabled: true,
+    id: "ai-chat-window-widget-button",
+    position: "bottom-right",
+    get: () => {
+      if (this.widget.enabled && this.widget.id) {
+        const el = document.getElementById(this.widget.id);
+        if (el) {
+          return el;
+        }
+      }
+
+      return null;
+    },
+    set: (options?: { position?: "bottom-right" | "bottom-left" }) => {
+      const el = this.widget.get();
+      if (!el) {
+        return null;
+      }
+
+      if (options?.position) {
+        if (
+          options.position === "bottom-right" ||
+          options.position === "bottom-left"
+        ) {
+          this.widget.position = options.position;
+        } else if (options.position === "bottom-left") {
+          this.widget.position = "bottom-left";
+        }
+      }
+
+      el.classList.remove(
+        "ai-chat-window-widget-button-bottom-left",
+        "ai-chat-window-widget-button-bottom-right"
+      );
+      el.classList.add(`ai-chat-window-widget-button-${this.widget.position}`);
+
+      el.removeEventListener("click", () => this.chatWindow.toggle());
+      el.addEventListener("click", () => this.chatWindow.toggle());
+    },
   };
   public chatWindow = {
     id: undefined as string | undefined,
@@ -195,6 +258,9 @@ class NavigableAI {
         <div></div>
       </div>`,
       inputPlaceholder: "Type your message here...",
+      widgetButton: `<button id="ai-chat-window-widget-button" aria-label="Open assistant">
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="40"  height="40"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-message-bolt"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 9h8" /><path d="M8 13h6" /><path d="M13 18l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v5.5" /><path d="M19 16l-2 3h4l-2 3" /></svg>
+      </button>`,
     },
     assistantResponding: false,
     markdown: false,
@@ -701,10 +767,13 @@ class NavigableAI {
           url: this.api.sendMessage.url,
           body,
           signaturePayload: message,
+          headers: {
+            "x-embed-id": this.embedId || "",
+          },
         });
       },
       method: "POST",
-      url: "",
+      url: ENDPOINTS.CHAT,
     },
     getMessages: {
       run: async () => {
@@ -723,7 +792,16 @@ class NavigableAI {
 
         const data = res.data as IChatGetMessageResponse;
 
-        this.chatWindow.messages = data.data;
+        if (this.chatWindow.messages.length === 0) {
+          this.chatWindow.messages = data.data;
+        } else if (this.chatWindow.messages.length === 2) {
+          this.chatWindow.messages = [
+            ...this.chatWindow.messages,
+            ...data.data,
+          ];
+        } else {
+          this.chatWindow.messages = data.data;
+        }
         this.chatWindow.set();
 
         return data.data;
@@ -735,10 +813,13 @@ class NavigableAI {
           method: this.api.getMessages.method as HTTPMethods,
           url: `${this.api.getMessages.url}?identifier=${identifier}`,
           signaturePayload: identifier,
+          headers: {
+            "x-embed-id": this.embedId || "",
+          },
         });
       },
       method: "GET",
-      url: "",
+      url: ENDPOINTS.CHAT,
     },
   };
   private autoRunActions: boolean = false;
@@ -906,18 +987,24 @@ class NavigableAI {
   };
 
   constructor(options: NavigableAIOptions) {
-    if (!options.id) {
-      this.console.error("div with id is required");
-      return;
+    if (options.id) {
+      const targetElement = document.getElementById(options.id);
+      if (targetElement) {
+        this.elementId = options.id;
+      }
     }
 
     (async () => {
       await this.waitForDOM();
 
-      const el = document.getElementById(options.id);
+      const el = document.getElementById(this.elementId);
       if (!el) {
-        this.console.error("div not found with id", options.id);
+        this.console.error("div not found with id", this.elementId);
         return;
+      }
+
+      if (options.embedId) {
+        this.embedId = options.embedId;
       }
 
       if (options.markdown) {
@@ -925,7 +1012,7 @@ class NavigableAI {
         this.showdown.load();
       }
 
-      this.chatWindow.id = options.id;
+      this.chatWindow.id = this.elementId;
 
       if (options.sharedSecretKeyConfig) {
         this.sharedSecretKeyConfig = options.sharedSecretKeyConfig;
@@ -992,10 +1079,33 @@ class NavigableAI {
         if (options.defaults.loader) {
           this.chatWindow.defaults.loader = options.defaults.loader;
         }
+        if (options.defaults.widgetButton) {
+          this.chatWindow.defaults.widgetButton = options.defaults.widgetButton;
+        }
       }
 
       if (options.darkTheme) {
         this.chatWindow.theme.dark();
+      }
+
+      if (options.widgetButtonDisabled) {
+        this.widget.enabled = false;
+      } else {
+        document.body.innerHTML =
+          document.body.innerHTML + this.chatWindow.defaults.widgetButton;
+      }
+
+      if (options.widgetButtonPosition) {
+        if (
+          options.widgetButtonPosition === "bottom-right" ||
+          options.widgetButtonPosition === "bottom-left"
+        ) {
+          this.widget.position = options.widgetButtonPosition;
+        }
+      }
+
+      if (this.widget.enabled) {
+        this.widget.set();
       }
     })();
   }
@@ -1005,4 +1115,8 @@ export { NavigableAI };
 
 if (typeof window !== "undefined") {
   (window as any).NavigableAI = NavigableAI;
+
+  const windowElement = document.createElement("div");
+  windowElement.id = "navigableai-chat-window";
+  document.body.appendChild(windowElement);
 }

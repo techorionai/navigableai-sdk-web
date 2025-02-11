@@ -1,4 +1,6 @@
 :root {
+  --ai-chat-window-color-widget-bg: #3782e2;
+  --ai-chat-window-color-widget-icon: white;
   --ai-chat-window-color-outline: #e7e7e775;
   --ai-chat-window-color-header: white;
   --ai-chat-window-color-bg-header: #3782e2;
@@ -298,6 +300,30 @@
 
 .ai-chat-window-loader div:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+#ai-chat-window-widget-button {
+  border-radius: 50%;
+  background-color: var(--ai-chat-window-color-widget-bg);
+  color: var(--ai-chat-window-color-widget-icon);
+  border: none;
+  position: fixed;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ai-chat-window-widget-button-bottom-right {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.ai-chat-window-widget-button-bottom-left {
+  bottom: 1rem;
+  left: 1rem;
 }
 
 @media (max-width: 420px) {

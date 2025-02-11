@@ -69,7 +69,11 @@ interface NavigableAIOptions {
     /**
      * HTML id of the div to render the chat window.
      */
-    id: string;
+    id?: string;
+    /**
+     * Your agent embed ID.
+     */
+    embedId?: string;
     /**
      * Unique identifier of your user.
      */
@@ -141,17 +145,40 @@ interface NavigableAIOptions {
          * Loader for the chat window message when the assistant response is loading. HTML string. Default is a dots animation.
          */
         loader?: string;
+        /**
+         * Button for the chat window. HTML string. Default is a button.
+         */
+        widgetButton?: string;
     };
     /**
      * Enable dark mode for the chat window.
      */
     darkTheme?: boolean;
+    /**
+     * Disable the widget button in the chat window. Default is false.
+     */
+    widgetButtonDisabled?: boolean;
+    /**
+     * Position of the widget button in the chat window. Default is "bottom-right".
+     */
+    widgetButtonPosition?: "bottom-right" | "bottom-left";
 }
 declare class NavigableAI {
     private sharedSecretKeyConfig;
+    elementId: string;
+    embedId: string | undefined;
     identifier: string | undefined;
     setIdentifier: (identifier: string) => void;
     getIdentifierFromLocalStorage: () => void;
+    widget: {
+        enabled: boolean;
+        id: string;
+        position: string;
+        get: () => HTMLElement | null;
+        set: (options?: {
+            position?: "bottom-right" | "bottom-left";
+        }) => null | undefined;
+    };
     chatWindow: {
         id: string | undefined;
         messages: IChatGetMessageResponse["data"];
@@ -163,6 +190,7 @@ declare class NavigableAI {
             sendIcon: string;
             loader: string;
             inputPlaceholder: string;
+            widgetButton: string;
         };
         assistantResponding: boolean;
         markdown: boolean;

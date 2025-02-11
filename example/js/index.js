@@ -1,17 +1,7 @@
 "use strict";
 
 const navigableai = new NavigableAI({
-  id: "navigableai-chat",
-  apiConfig: {
-    sendMessage: {
-      url: "http://localhost:4000/assistant/send-message",
-      method: "POST",
-    },
-    getMessages: {
-      url: "http://localhost:4000/assistant/get-messages",
-      method: "GET",
-    },
-  },
+  embedId: "<your embed id>",
   actions: {
     "Contact Support": () => {
       console.log("Contact Support"); // Replace with logic to handle the action
@@ -19,6 +9,7 @@ const navigableai = new NavigableAI({
   },
   markdown: true,
   // darkTheme: true,
+  widgetButtonPosition: "bottom-left",
 });
 
 document.querySelector("#open-button")?.addEventListener("click", () => {
