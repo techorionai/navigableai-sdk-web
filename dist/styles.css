@@ -353,3 +353,9 @@
     transform: scale(1.25);
   }
 }
+
+@media (max-height: 672px) {
+  .ai-chat-window {
+    height: calc(100vh - 2rem);
+  }
+}
