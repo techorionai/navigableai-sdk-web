@@ -102,7 +102,7 @@ interface NavigableAIOptions {
     /**
      * Navigation actions to be suggested by the assistant.
      */
-    actions?: Record<string, Function>;
+    actions?: Record<string, Function | string | null>;
     /**
      * Automatically run an action suggested by the assistant.
      *
@@ -260,11 +260,16 @@ declare class NavigableAI {
             url: string;
         };
     };
+    goTo: (path: string) => void;
+    /**
+     * Action handler for the assistant.
+     */
+    actionHandler: (action?: string) => void;
     private autoRunActions;
     /**
      * Navigation actions to be suggested by the assistant.
      */
-    actions: Record<string, Function>;
+    actions: Record<string, Function | string | null>;
     /**
      * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
      */

@@ -121,7 +121,7 @@ interface NavigableAIOptions {
   /**
    * Navigation actions to be suggested by the assistant.
    */
-  actions?: Record<string, Function>;
+  actions?: Record<string, Function | string | null>;
   /**
    * Automatically run an action suggested by the assistant.
    *
@@ -461,7 +461,7 @@ class NavigableAI {
             );
             if (actionName && this.actions[actionName]) {
               button.removeEventListener("click", () => {
-                this.actions[actionName]();
+                this.actionHandler(actionName);
               });
             }
           });
@@ -505,7 +505,7 @@ class NavigableAI {
             );
             if (actionName && this.actions[actionName]) {
               button.addEventListener("click", () => {
-                this.actions[actionName]();
+                this.actionHandler(actionName);
               });
             }
           });
@@ -747,7 +747,7 @@ class NavigableAI {
           this.actions[data.data.action] &&
           this.autoRunActions
         ) {
-          this.actions[data.data.action]();
+          this.actionHandler();
         }
 
         if (data.data.toolCalls && data.data.toolCalls.length > 0) {
@@ -822,11 +822,38 @@ class NavigableAI {
       url: ENDPOINTS.CHAT,
     },
   };
+  public goTo = (path: string) => {
+    this.console.log("Navigating to:", path);
+    if (!window || typeof window === "undefined") {
+      return;
+    }
+
+    window.location.href = path;
+  };
+
+  /**
+   * Action handler for the assistant.
+   */
+  public actionHandler = (action?: string) => {
+    if (!action) {
+      return;
+    }
+
+    const handler = this.actions[action];
+
+    this.console.log("Running action:", action, handler);
+
+    if (typeof handler === "string") {
+      this.goTo(handler);
+    } else if (typeof handler === "function") {
+      handler();
+    }
+  };
   private autoRunActions: boolean = false;
   /**
    * Navigation actions to be suggested by the assistant.
    */
-  public actions = {} as Record<string, Function>;
+  public actions = {} as Record<string, Function | string | null>;
   /**
    * Functions that can be automated through the assistant. The function should return a string with a status message or simply true for success and false for error.
    */
