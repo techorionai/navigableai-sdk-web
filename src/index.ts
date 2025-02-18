@@ -695,11 +695,18 @@ class NavigableAI {
         if (this.chatWindow.markdown && this.showdown.converter) {
           body.markdown = true;
         }
-        const configuredActions = Object.keys(this.actions);
+        const configuredActions = Object.keys(this.actions).filter(
+          (action) =>
+            typeof this.actions[action] === "function" ||
+            typeof this.actions[action] === "string"
+        );
         if (configuredActions.length) {
           body.configuredActions = configuredActions;
         }
-        const configuredFunctions = Object.keys(this.agentFunctions);
+        const configuredFunctions = Object.keys(this.agentFunctions).filter(
+          (functionName) =>
+            typeof this.agentFunctions[functionName] === "function"
+        );
         if (configuredFunctions.length) {
           body.configuredFunctions = configuredFunctions;
         }
