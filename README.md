@@ -1,6 +1,6 @@
 # Navigable AI Chat SDK
 
-The **Navigable AI Chat SDK** provides an easily embeddable and customizable chat interface to integrate AI assistant capabilities into your web application. This documentation will guide you through the installation, setup, and usage of the SDK, along with reference information on the main functions available.
+The **Navigable AI Web Chat SDK** provides an easily embeddable and customizable chat interface to integrate AI assistant capabilities into your web application. This documentation will guide you through the installation, setup, and usage of the SDK, along with reference information on the main functions available.
 
 ---
 
@@ -38,21 +38,71 @@ To get started, include the required files in your project:
 
 ## Setup and Usage
 
-### HTML
+### With Embed Code
 
-Add a container for the chat window in your HTML:
+Using the `embedId` is the simplest way to add the chat widget to your application.
 
-```html
-<div id="navigableai-chat"></div>
+#### JavaScript - Embed Code
+
+##### Chat Only
+
+```javascript
+const navigableai = new NavigableAI({
+  embedId: "YOUR_EMBED_ID",
+  markdown: true
+  identifier: "<your user's unique identifier>"
+})
 ```
 
-### JavaScript
+##### Chat with Actions
+
+Actions can be passed as strings or functions.
+
+```javascript
+const navigableai = new NavigableAI({
+  embedId: "YOUR_EMBED_ID",
+  actions: {
+    Login: "https://www.example.com/login",
+    Logout: () => {
+      // Your logic to logout
+    },
+  },
+});
+```
+
+##### Chat with Actions and Functions
+
+Function handlers should be functions that return a string message to tell the assistant if the action was successful or not.
+
+```javascript
+const navigableai = new NavigableAI({
+  embedId: "YOUR_EMBED_ID",
+  actions: {
+    // your actions
+  },
+  functions: {
+    "raise_a_support_ticket": ({ issue, email }) => {
+      // Your logic to raise a support ticket
+      if(/* success */) {
+        return "Ticket created successfully";
+      }else{
+        return "Ticket creation failed";
+      }
+    },
+  }
+})
+```
+
+### Using the API with your backend
+
+Once you've setup proxy API endpoints, you can use the `apiConfig` option to configure the SDK to communicate with your backend.
+
+#### JavaScript - Custom Backend
 
 Initialize the Navigable AI Chat SDK:
 
 ```javascript
 const navigableai = new NavigableAI({
-  id: "navigableai-chat",
   apiConfig: {
     sendMessage: {
       url: "http://localhost:4000/assistant/send-message", // Replace with your proxy server endpoint
@@ -64,11 +114,13 @@ const navigableai = new NavigableAI({
     },
   },
   actions: {
-    "Contact Support": () => {
-      window.location.href = "https://www.example.com/support"; // Replace with logic to handle your actions
-    },
+    // your actions
   },
+  functions: {
+    // your functions
+  }
   identifier: "<your user's unique identifier>", // optional
+  markdown: true,
   sharedDataKeyConfig: {
     // Optional, but recommended for additional security
     sharedDataKey: "<your shared data key>",
@@ -83,11 +135,13 @@ const navigableai = new NavigableAI({
 #### Open or Toggle the chat window
 
 ```javascript
+// Your open button selector
 document.querySelector("#open-button")?.addEventListener("click", () => {
   console.log("Button clicked");
   navigableai.chatWindow.open();
 });
 
+// Your toggle button selector
 document.querySelector("#toggle-button")?.addEventListener("click", () => {
   console.log("Button toggled");
   navigableai.chatWindow.toggle();
@@ -98,13 +152,13 @@ document.querySelector("#toggle-button")?.addEventListener("click", () => {
 
 The `NavigableAIOptions` interface defines all the configurable options you can pass when instantiating the `NavigableAI` class. These options control the behavior and appearance of the AI assistant.
 
-### 1. `id` (string) **Required**
+### 1. `embedId` (string) **Optional**
 
-- **Description**: This is the HTML `id` of the div element where the chat window will be rendered. The assistant will be displayed inside this container.
+- **Description**: The embed ID of the chat window to be rendered.
 - **Example**:
 
-  ```html
-  <div id="navigableai-chat"></div>
+  ```js
+  embedId: "YOUR_EMBED_ID";
   ```
 
 ### 2. `identifier` (string) **Optional**
@@ -113,7 +167,7 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
 - **Example**:
 
   ```javascript
-  identifier: "user-12345";
+  identifier: "user-12345"; // Replace with user ID or email. Something that uniquely identifies the user
   ```
 
 ### 3. `sharedSecretKeyConfig` (SharedSecretKeyConfig) **Optional**
@@ -165,34 +219,76 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
   }
   ```
 
-### 5. `actions` (Record<string, Function>) **Optional**
+### 5. `actions` (Record\<string, string | Function | null>) **Optional**
 
-- **Description**: A map of custom actions that can be triggered by the assistant. The key is the name of the action, and the value is the function to execute when that action is triggered (e.g., when a user clicks a button).
+- **Description**: A map of custom actions that can be triggered by the assistant. The key is the name of the action, and the value is the function to execute when that action is triggered (e.g., when a user clicks a button), or a URL (string) to navigate to.
 
   **Example**:
 
   ```javascript
   actions: {
-    "Contact Support": () => {
-      console.log("Contact Support action triggered");
-      // Custom logic for contacting support, such as opening a support form or sending an email.
+    Login: "https://www.example.com/login",
+    Logout: () => {
+      // Your logic to logout
     },
-    "Open Help": () => {
-      window.open("https://your-site.com/help");
-    }
-  }
+  },
   ```
 
 ### 6. `autoRunActions` (boolean) **Optional**
 
-- **Description**: When set to `true`, the assistant will automatically execute any actions suggested by the assistant itself. This is helpful for automating tasks based on AI responses.
+- **Description**: When set to `true`, the assistant will automatically execute any actions suggested by the assistant itself. Set this to true if you want to directly execute actions when they are suggested.
 - **Default**: `false`
-- **Example**:
+
+  **Example**:
+
   ```javascript
   autoRunActions: true;
   ```
 
-### 7. `defaults` (object) **Optional**
+### 7. `agentFunctions` (Record\<string, Function | null>)
+
+- **Description**: Functions that can be automated through the assistant. The handler function should return a string with a status message or simply true for success and false for error.
+
+**Example**:
+
+```javascript
+const navigableai = new NavigableAI({
+  embedId: "YOUR_EMBED_ID",
+  agentFunctions: {
+    raise_a_support_ticket: () => {
+      // Your logic to raise a support ticket
+      return "Ticket created successfully";
+    },
+  },
+});
+```
+
+### 8. `darkTheme` (boolean) **Optional**
+
+- **Description**: Whether to use the dark theme for the chat window. Default is `false`.
+
+### 9. `markdown` (boolean) **Optional**
+
+- **Description**: Whether to use Markdown in the chat window. Default is `false`. If set to `true`, the [`showdown`](https://showdownjs.com/) library will be loaded to render markdown.
+
+### 10. `id` (string) **Optional**
+
+- **Description**: This is the HTML `id` of the div element where the chat window will be rendered. The assistant will be displayed inside this container. By default, a div is created whose id is `navigableai-chat-window`. The chat window will be rendered inside this div.
+- **Example**:
+
+  ```html
+  <div id="navigableai-chat"></div>
+  ```
+
+### 11. `widgetButtonDisabled` (boolean) **Optional**
+
+- **Description**: Whether to hide the widget button. Default is `false`.
+
+### 12. `widgetButtonPosition` ("bottom-right" | "bottom-left") **Optional**
+
+- **Description**: Position of the widget button in the chat window. Default is "bottom-right".
+
+### 13. `defaults` (object) **Optional**
 
 - **Description**: This object contains default values for the chat window, including visual and messaging options.
 
@@ -205,6 +301,7 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
   - `closeIcon` (string): HTML string for the close button icon. The default is a cross icon.
   - `sendIcon` (string): HTML string for the send button icon. The default is a send icon.
   - `loader` (string): HTML string for the loader animation displayed while the assistant is typing or processing a response. The default is a dots animation.
+  - `widgetButton` (string): HTML string for the widget button. The default is a chat icon button.
 
   **Example**:
 
@@ -221,31 +318,31 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
         <div></div>
         <div></div>
       </div>`,
-    inputPlaceholder: "Type your message here...",
+    widgetButton: `<button        id="ai-chat-window-widget-button" aria-label="Open assistant">
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="40"  height="40"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-message-bolt"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 9h8" /><path d="M8 13h6" /><path d="M13 18l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v5.5" /><path d="M19 16l-2 3h4l-2 3" /></svg>
+      </button>`,
   }
   ```
-
-### 8. `darkTheme` (boolean) **Optional**
-
-- **Description**: Whether to use the dark theme for the chat window. Default is `false`.
-
-### 9. `markdown` (boolean) **Optional**
-
-- **Description**: Whether to use Markdown in the chat window. Default is `false`. If set to `true`, the [`showdown`](https://showdownjs.com/) library will be loaded to render markdown.
 
 ---
 
 ### Summary of Instantiation Options
 
-| Option                  | Type                                  | Description                                                             | Default        |
-| ----------------------- | ------------------------------------- | ----------------------------------------------------------------------- | -------------- |
-| `id`                    | `string`                              | The HTML id of the div to render the chat window.                       | -              |
-| `identifier`            | `string` (optional)                   | Unique identifier for the user.                                         | Auto-generated |
-| `sharedSecretKeyConfig` | `SharedSecretKeyConfig` (optional)    | Configuration for the shared secret key used in API requests.           | -              |
-| `apiConfig`             | `object` (optional)                   | Configuration for API endpoints.                                        | -              |
-| `actions`               | `Record<string, Function>` (optional) | Custom actions triggered by the assistant.                              | -              |
-| `autoRunActions`        | `boolean` (optional)                  | Whether actions suggested by the assistant should be automatically run. | `false`        |
-| `defaults`              | `object` (optional)                   | Default values for visual elements and messages.                        | -              |
+| Option                  | Type                                         | Description                                                            | Default                                               |
+| ----------------------- | -------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------- |
+| `embedId`               | `string`                                     | Embed ID of the chat window.                                           | None                                                  |
+| `identifier`            | `string`                                     | Unique identifier for the user. Auto-generated if not provided.        | Auto-generated                                        |
+| `sharedSecretKeyConfig` | `object` (`SharedSecretKeyConfig`)           | Configuration for shared secret key authentication.                    | None                                                  |
+| `apiConfig`             | `object`                                     | API configuration for sending/retrieving messages.                     | None                                                  |
+| `actions`               | `Record<string, string \| Function \| null>` | Custom actions that the assistant can trigger.                         | None                                                  |
+| `autoRunActions`        | `boolean`                                    | Whether actions suggested by the assistant are automatically executed. | `false`                                               |
+| `agentFunctions`        | `Record<string, Function \| null>`           | Functions that the assistant can automate.                             | None                                                  |
+| `darkTheme`             | `boolean`                                    | Enables dark theme for the chat window.                                | `false`                                               |
+| `markdown`              | `boolean`                                    | Enables Markdown rendering in the chat window.                         | `false`                                               |
+| `id`                    | `string`                                     | HTML `id` of the div where the chat window is rendered.                | `"navigableai-chat-window"`                           |
+| `widgetButtonDisabled`  | `boolean`                                    | Hides the widget button.                                               | `false`                                               |
+| `widgetButtonPosition`  | `"bottom-right" \| "bottom-left"`            | Position of the widget button.                                         | `"bottom-right"`                                      |
+| `defaults`              | `object`                                     | Default values for chat window UI and messaging.                       | Various defaults for title, icons, placeholders, etc. |
 
 ## Color Customization
 
