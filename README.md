@@ -80,7 +80,7 @@ const navigableai = new NavigableAI({
   actions: {
     // your actions
   },
-  functions: {
+  agentFunctions: {
     "raise_a_support_ticket": ({ issue, email }) => {
       // Your logic to raise a support ticket
       if(/* success */) {
@@ -116,7 +116,7 @@ const navigableai = new NavigableAI({
   actions: {
     // your actions
   },
-  functions: {
+  agentFunctions: {
     // your functions
   }
   identifier: "<your user's unique identifier>", // optional
