@@ -50,7 +50,8 @@ Using the `embedId` is the simplest way to add the chat widget to your applicati
 const navigableai = new NavigableAI({
   embedId: "YOUR_EMBED_ID",
   markdown: true
-  identifier: "<your user's unique identifier>"
+  identifier: "<your user's unique identifier>",
+  welcomeMessage: "Hello! How can I assist you today?",
 })
 ```
 
@@ -66,7 +67,11 @@ const navigableai = new NavigableAI({
     Logout: () => {
       // Your logic to logout
     },
+    "Sign Up": "https://www.example.com/signup",
   },
+  welcomeMessage:
+    "Hello! How can I assist you today? Use the quick actions to get started.",
+  welcomeActions: ["Sign Up", "Login"],
 });
 ```
 
@@ -90,6 +95,10 @@ const navigableai = new NavigableAI({
       }
     },
   }
+
+  welcomeMessage:
+    "Hello! How can I assist you today? Use the quick actions to get started.",
+  welcomeActions: ["Sign Up", "Login"],
 })
 ```
 
@@ -324,6 +333,26 @@ const navigableai = new NavigableAI({
   }
   ```
 
+### 14. `welcomeMessage` (string) **Optional**
+
+- **Description**: The welcome message to be shown when the chat window is opened. Default is `undefined`.
+
+- **Example**:
+
+  ```javascript
+  welcomeMessage: "Hello! How can I assist you today?";
+  ```
+
+### 15. `welcomeActions` (string[]) **Optional**
+
+- **Description**: An array of actions to be suggested to the user when the chat window is opened for the first time or after an hour of inactivity. Default is `undefined`.
+
+- **Example**:
+
+  ```javascript
+  welcomeActions: ["Get Started", "Help", "Contact Support"];
+  ```
+
 ---
 
 ### Summary of Instantiation Options
@@ -343,6 +372,8 @@ const navigableai = new NavigableAI({
 | `widgetButtonDisabled`  | `boolean`                                    | Hides the widget button.                                               | `false`                                               |
 | `widgetButtonPosition`  | `"bottom-right" \| "bottom-left"`            | Position of the widget button.                                         | `"bottom-right"`                                      |
 | `defaults`              | `object`                                     | Default values for chat window UI and messaging.                       | Various defaults for title, icons, placeholders, etc. |
+| `welcomeMessage`        | `string`                                     | The welcome message to be shown when the chat window is opened.        | `undefined`                                           |
+| `welcomeActions`        | `string[]`                                   | Actions to be suggested to the user when the chat window is opened.    | `undefined`                                           |
 
 ## Color Customization
 

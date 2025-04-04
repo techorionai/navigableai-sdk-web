@@ -52,13 +52,14 @@ interface IChatGetMessageResponse {
     success: boolean;
     message: string;
     errors?: Record<string, string>;
-    data: {
-        sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
-        content: string;
-        new: boolean;
-        createdAt: Date;
-        action: string | null;
-    }[];
+    data: IMessage[];
+}
+interface IMessage {
+    sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
+    content: string;
+    new: boolean;
+    createdAt: Date;
+    action: string | null;
 }
 interface RequestConfig extends APIUrlConfig {
     headers?: Record<string, string>;
@@ -162,6 +163,14 @@ interface NavigableAIOptions {
      * Position of the widget button in the chat window. Default is "bottom-right".
      */
     widgetButtonPosition?: "bottom-right" | "bottom-left";
+    /**
+     * Default message to be shown when the user opens the chat window for the first time.
+     */
+    welcomeMessage?: string;
+    /**
+     * Default actions to suggest to the user when the user opens the chat window for the first time.
+     */
+    welcomeActions?: string[];
 }
 declare class NavigableAI {
     private sharedSecretKeyConfig;
@@ -170,6 +179,8 @@ declare class NavigableAI {
     identifier: string | undefined;
     setIdentifier: (identifier: string) => void;
     getIdentifierFromLocalStorage: () => void;
+    welcomeMessage: string | undefined;
+    welcomeActions: string[] | undefined;
     widget: {
         enabled: boolean;
         id: string;
@@ -246,13 +257,7 @@ declare class NavigableAI {
             url: string;
         };
         getMessages: {
-            run: () => Promise<{
-                sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
-                content: string;
-                new: boolean;
-                createdAt: Date;
-                action: string | null;
-            }[] | null>;
+            run: () => Promise<IMessage[] | null>;
             request: (identifier: string) => Promise<{
                 data: IChatGetMessageResponse;
             } | null>;

@@ -69,13 +69,15 @@ interface IChatGetMessageResponse {
   success: boolean;
   message: string;
   errors?: Record<string, string>;
-  data: {
-    sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
-    content: string;
-    new: boolean;
-    createdAt: Date;
-    action: string | null;
-  }[];
+  data: IMessage[];
+}
+
+interface IMessage {
+  sender: "USER" | "ASSISTANT" | "ASSISTANT-LOADING" | "ERROR" | "TOOL";
+  content: string;
+  new: boolean;
+  createdAt: Date;
+  action: string | null;
 }
 
 interface RequestConfig extends APIUrlConfig {
@@ -181,6 +183,14 @@ interface NavigableAIOptions {
    * Position of the widget button in the chat window. Default is "bottom-right".
    */
   widgetButtonPosition?: "bottom-right" | "bottom-left";
+  /**
+   * Default message to be shown when the user opens the chat window for the first time.
+   */
+  welcomeMessage?: string;
+  /**
+   * Default actions to suggest to the user when the user opens the chat window for the first time.
+   */
+  welcomeActions?: string[];
 }
 
 const ENDPOINTS = {
@@ -202,6 +212,8 @@ class NavigableAI {
       this.identifier = identifier;
     }
   };
+  public welcomeMessage: string | undefined = undefined;
+  public welcomeActions: string[] | undefined = undefined;
   public widget = {
     enabled: true,
     id: "ai-chat-window-widget-button",
@@ -324,6 +336,19 @@ class NavigableAI {
         return false;
       }
 
+      const lastMessageTimeWasMoreThanAnHourAgo = () => {
+        if (this.chatWindow.messages.length === 0) return true;
+
+        return (
+          new Date(
+            this.chatWindow.messages[
+              this.chatWindow.messages.length - 1
+            ].createdAt
+          ).getTime() <
+          new Date().getTime() - 3600000
+        );
+      };
+
       el.classList.add("ai-chat-window");
       el.innerHTML = `
       <div class="ai-chat-window-container">
@@ -355,26 +380,73 @@ class NavigableAI {
                 : "white-space: pre-wrap";
 
               return `
-          <div class="ai-chat-window-message ${`ai-chat-window-message-${message.sender.toLowerCase()}`}">
-            ${
-              message.sender === "USER" || message.sender === "ASSISTANT"
-                ? `<div aria-label="${message.sender} ${
-                    message.content
-                  }" style="${messageStyle}">${content}${
-                    message.action
-                      ? this.actions[message.action]
-                        ? `<br/><button class="ai-chat-window-message-action" aria-label="${message.action}" data-ai-chat-window-message-action="${message.action}">${message.action}</button>`
-                        : ""
-                      : ""
-                  } </div>`
-                : message.sender === "ASSISTANT-LOADING"
-                ? this.chatWindow.defaults.loader
-                : `<p aria-label="${message.sender} ${message.content}">${this.chatWindow.defaults.error}</p>`
-            }   
-          </div>
-          `;
+                <div class="ai-chat-window-message ${`ai-chat-window-message-${message.sender.toLowerCase()}`}">
+                  ${
+                    message.sender === "USER" || message.sender === "ASSISTANT"
+                      ? `<div aria-label="${message.sender} ${
+                          message.content
+                        }" style="${messageStyle}">${content}${
+                          message.action
+                            ? this.actions[message.action]
+                              ? `<br/><button class="ai-chat-window-message-action" aria-label="${message.action}" data-ai-chat-window-message-action="${message.action}">${message.action}</button>`
+                              : ""
+                            : ""
+                        } </div>`
+                      : message.sender === "ASSISTANT-LOADING"
+                      ? this.chatWindow.defaults.loader
+                      : `<p aria-label="${message.sender} ${message.content}">${this.chatWindow.defaults.error}</p>`
+                  }   
+                </div>
+                `;
             })
             .join("")}
+            ${
+              this.chatWindow.messages.length === 0 ||
+              lastMessageTimeWasMoreThanAnHourAgo()
+                ? this.welcomeMessage && this.welcomeMessage.length
+                  ? (() => {
+                      const message: IMessage = {
+                        sender: "ASSISTANT",
+                        content: this.welcomeMessage,
+                        new: false,
+                        createdAt: new Date(),
+                        action: null,
+                      };
+                      const shouldRenderMarkdown =
+                        this.chatWindow.markdown &&
+                        this.showdown.converter &&
+                        message.sender === "ASSISTANT";
+                      const content = shouldRenderMarkdown
+                        ? this.showdown.converter.makeHtml(message.content)
+                        : message.content;
+                      const messageStyle = shouldRenderMarkdown
+                        ? ""
+                        : "white-space: pre-wrap";
+
+                      const validWelcomeActions = this.welcomeActions?.filter(
+                        (action) => this.actions[action]
+                      );
+
+                      return `
+                        <div class="ai-chat-window-message ${`ai-chat-window-message-${message.sender.toLowerCase()}`}">
+                          ${`<div aria-label="${message.sender} ${
+                            message.content
+                          }" style="${messageStyle}">${content}${
+                            validWelcomeActions && validWelcomeActions.length
+                              ? `<br/>${validWelcomeActions
+                                  .map(
+                                    (action) =>
+                                      `<button class="ai-chat-window-message-action" aria-label="${action}" data-ai-chat-window-message-action="${action}">${action}</button>`
+                                  )
+                                  .join("")}`
+                              : ""
+                          } </div>`}   
+                        </div>
+                        `;
+                    })()
+                  : ""
+                : ""
+            }
         </div>
         <div class="ai-chat-window-input-section">
           <form id="ai-chat-window-input-form">
@@ -1135,6 +1207,20 @@ class NavigableAI {
           options.widgetButtonPosition === "bottom-left"
         ) {
           this.widget.position = options.widgetButtonPosition;
+        }
+      }
+
+      if (options.welcomeMessage) {
+        if (options.welcomeMessage.length > 0) {
+          this.welcomeMessage = options.welcomeMessage.trim();
+
+          if (options.welcomeActions) {
+            if (options.welcomeActions.length > 0) {
+              this.welcomeActions = options.welcomeActions?.filter((action) => {
+                return this.actions[action];
+              });
+            }
+          }
         }
       }
 

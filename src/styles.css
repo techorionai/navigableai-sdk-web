@@ -249,6 +249,7 @@
   color: var(--ai-chat-window-color-border-action);
   border-radius: 0.5rem;
   margin-top: 0.5rem;
+  margin-right: 0.5rem;
   cursor: pointer;
   padding: 0.5rem 1rem;
   font-weight: 700;
