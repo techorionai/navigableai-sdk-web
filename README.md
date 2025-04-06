@@ -24,14 +24,14 @@ To get started, include the required files in your project:
 ```html
 <link
   rel="stylesheet"
-  href="https://www.navigable.ai/sdk-web/0.2.0/styles.css"
+  href="https://www.navigable.ai/sdk-web/0.2.1/styles.css"
 />
 ```
 
 #### JavaScript
 
 ```html
-<script src="https://www.navigable.ai/sdk-web/0.2.0/index.js"></script>
+<script src="https://www.navigable.ai/sdk-web/0.2.1/index.js"></script>
 ```
 
 ---
