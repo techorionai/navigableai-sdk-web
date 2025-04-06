@@ -226,6 +226,7 @@ declare class NavigableAI {
         };
         messageInput: {
             get: () => HTMLTextAreaElement | null;
+            set: (value?: string) => HTMLTextAreaElement | null;
             submitOnEnter: (e: KeyboardEvent) => void;
         };
         messageForm: {

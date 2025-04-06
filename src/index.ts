@@ -628,6 +628,21 @@ class NavigableAI {
           ".ai-chat-window-input-field"
         ) as HTMLTextAreaElement | null;
       },
+      set: (value?: string) => {
+        if (!value) {
+          this.console.error(
+            "No value provided to messageInput.set(value: string)"
+          );
+          return null;
+        }
+        const el = this.chatWindow.messageInput.get();
+        if (!el) {
+          return null;
+        }
+
+        el.value = value;
+        return el;
+      },
       submitOnEnter: (e: KeyboardEvent) => {
         if (e.key === "Enter") {
           e.preventDefault();
