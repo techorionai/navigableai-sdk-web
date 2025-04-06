@@ -349,6 +349,50 @@ class NavigableAI {
         );
       };
 
+      const welcomeMessage = () => {
+        if (!this.welcomeMessage) {
+          return "";
+        }
+
+        const message: IMessage = {
+          sender: "ASSISTANT",
+          content: this.welcomeMessage,
+          new: false,
+          createdAt: new Date(),
+          action: null,
+        };
+        const shouldRenderMarkdown =
+          this.chatWindow.markdown &&
+          this.showdown.converter &&
+          message.sender === "ASSISTANT";
+        const content = shouldRenderMarkdown
+          ? this.showdown.converter.makeHtml(message.content)
+          : message.content;
+        const messageStyle = shouldRenderMarkdown
+          ? ""
+          : "white-space: pre-wrap";
+
+        const validWelcomeActions = this.welcomeActions?.filter(
+          (action) => this.actions[action]
+        );
+
+        return `
+                <div class="ai-chat-window-message ${`ai-chat-window-message-${message.sender.toLowerCase()}`}">
+                  ${`<div aria-label="${message.sender} ${
+                    message.content
+                  }" style="${messageStyle}">${content}${
+                    validWelcomeActions && validWelcomeActions.length
+                      ? `<br/>${validWelcomeActions
+                          .map(
+                            (action) =>
+                              `<button class="ai-chat-window-message-action" aria-label="${action}" data-ai-chat-window-message-action="${action}">${action}</button>`
+                          )
+                          .join("")}`
+                      : ""
+                  } </div>`}   
+                </div>`;
+      };
+
       el.classList.add("ai-chat-window");
       el.innerHTML = `
       <div class="ai-chat-window-container">
@@ -366,6 +410,13 @@ class NavigableAI {
           </div>
         </div>
         <div class="ai-chat-window-messages">
+        ${
+          !lastMessageTimeWasMoreThanAnHourAgo()
+            ? this.welcomeMessage && this.welcomeMessage.length
+              ? welcomeMessage()
+              : ""
+            : ""
+        }
           ${this.chatWindow.messages
             .map((message) => {
               const shouldRenderMarkdown =
@@ -404,46 +455,7 @@ class NavigableAI {
               this.chatWindow.messages.length === 0 ||
               lastMessageTimeWasMoreThanAnHourAgo()
                 ? this.welcomeMessage && this.welcomeMessage.length
-                  ? (() => {
-                      const message: IMessage = {
-                        sender: "ASSISTANT",
-                        content: this.welcomeMessage,
-                        new: false,
-                        createdAt: new Date(),
-                        action: null,
-                      };
-                      const shouldRenderMarkdown =
-                        this.chatWindow.markdown &&
-                        this.showdown.converter &&
-                        message.sender === "ASSISTANT";
-                      const content = shouldRenderMarkdown
-                        ? this.showdown.converter.makeHtml(message.content)
-                        : message.content;
-                      const messageStyle = shouldRenderMarkdown
-                        ? ""
-                        : "white-space: pre-wrap";
-
-                      const validWelcomeActions = this.welcomeActions?.filter(
-                        (action) => this.actions[action]
-                      );
-
-                      return `
-                        <div class="ai-chat-window-message ${`ai-chat-window-message-${message.sender.toLowerCase()}`}">
-                          ${`<div aria-label="${message.sender} ${
-                            message.content
-                          }" style="${messageStyle}">${content}${
-                            validWelcomeActions && validWelcomeActions.length
-                              ? `<br/>${validWelcomeActions
-                                  .map(
-                                    (action) =>
-                                      `<button class="ai-chat-window-message-action" aria-label="${action}" data-ai-chat-window-message-action="${action}">${action}</button>`
-                                  )
-                                  .join("")}`
-                              : ""
-                          } </div>`}   
-                        </div>
-                        `;
-                    })()
+                  ? welcomeMessage()
                   : ""
                 : ""
             }

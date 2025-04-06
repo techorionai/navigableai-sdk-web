@@ -17,7 +17,7 @@ const navigableai = new NavigableAI({
 
   markdown: true,
   widgetButtonPosition: "bottom-left",
-  // darkTheme: true,
+  darkTheme: true,
 
   welcomeMessage:
     "Hi, I'm Navi, the AI Assistant for Navigable AI. I can guide you through the Navigable AI platform by suggesting actions to perform.",

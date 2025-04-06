@@ -25,6 +25,8 @@
 }
 
 .ai-chat-window-dark-theme {
+  --ai-chat-window-color-widget-bg: #3782e2;
+  --ai-chat-window-color-widget-icon: #1f1f1f;
   --ai-chat-window-color-outline: #44444475;
   --ai-chat-window-color-header: #1f1f1f;
   --ai-chat-window-color-bg-header: #3782e2;
