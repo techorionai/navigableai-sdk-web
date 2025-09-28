@@ -1,0 +1,46 @@
+import executeToolCalls from "../../utils/executeToolCalls.js";
+import getEnabledActions from "../../utils/getEnabledActions.js";
+import getEnabledFunctions from "../../utils/getEnabledFunctions.js";
+import logger from "../../utils/logger.js";
+import sendEventToIframe from "../../utils/sendEvent.js";
+const chatProviderSendMessageEventHandler = async (data) => {
+    try {
+        logger.log("Handling chatProviderSendMessage event:", data);
+        if (!window.$aiChatWidget.chatProvider) {
+            throw new Error("Chat provider is not initialized.");
+        }
+        if (!window.$aiChatWidget.chatProvider.sendMessage) {
+            throw new Error("Chat provider has not implemented sending messages.");
+        }
+        const enabledActions = getEnabledActions();
+        data.enabledActions = enabledActions;
+        const enabledFunctions = getEnabledFunctions();
+        data.enabledFunctions = enabledFunctions;
+        const result = await window.$aiChatWidget.chatProvider?.sendMessage(data);
+        if (!result) {
+            throw new Error("An error occurred while sending the message.");
+        }
+        // Send the result back to the iframe
+        sendEventToIframe("chatProviderSendMessage", {
+            data: result,
+        });
+        logger.log("ToolCalls from sendMessage:", result.toolCalls);
+        if (result.toolCalls && result.toolCalls.length > 0) {
+            const toolCallResults = await executeToolCalls(result.toolCalls);
+            logger.log("ToolCall results:", toolCallResults);
+            chatProviderSendMessageEventHandler({
+                sessionId: data.sessionId,
+                content: "",
+                toolCallResults,
+            });
+        }
+    }
+    catch (error) {
+        logger.error("Error handling chatProviderSendMessage event:", error);
+        // Send error back to iframe
+        sendEventToIframe("chatProviderSendMessage", {
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+export default chatProviderSendMessageEventHandler;
