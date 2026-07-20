@@ -1,7 +1,7 @@
 import navigableResponseHandler from "../../../utils/navigableResponseHandler.js";
 import request from "../../../utils/request.js";
 import generateTULIP from "../../../utils/tulip.js";
-const API_ENDPOINT = "https://www.navigable.ai/api/embed/v1";
+const API_ENDPOINT = "https://navigable-ai-production-r7qp8.ondigitalocean.app/api/embed/v1";
 class NavigableChatProvider {
     apiMode = "unknown";
     embedId = undefined;

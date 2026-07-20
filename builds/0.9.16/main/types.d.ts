@@ -258,7 +258,7 @@ export interface FooterTabProps {
     props?: TextProps;
     /** Props to pass to the icon element. Example: { size: "4rem" } */
     iconProps?: ThemeIconProps;
-    /** Alternative icon to display. Any icon path from the icons directory (https://assets.navigable.ai/icons/) or a URL to an SVG icon. */
+    /** Alternative icon to display. Any icon path from the icons directory (https://assets-clvwr.ondigitalocean.app/icons/) or a URL to an SVG icon. */
     altIcon?: string;
 }
 /**
