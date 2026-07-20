@@ -24,14 +24,14 @@ To get started, include the required files in your project:
 ```html
 <link
   rel="stylesheet"
-  href="https://www.navigable.ai/sdk-web/0.2.1/styles.css"
+  href="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.2.1/styles.css"
 />
 ```
 
 #### JavaScript
 
 ```html
-<script src="https://www.navigable.ai/sdk-web/0.2.1/index.js"></script>
+<script src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.2.1/index.js"></script>
 ```
 
 ---
@@ -183,7 +183,6 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
 
 - **Description**: Configuration for the shared secret key used in API requests to ensure secure communication between the client and server.
 - **Properties**:
-
   - `sharedSecretKey` (string): The secret key to be used for authentication. This should be securely stored.
   - `placement` ("query" | "header"): Specifies whether the key should be placed in the URL query or HTTP headers.
   - `key` (string): The key name for the secret in your request.
@@ -203,9 +202,7 @@ The `NavigableAIOptions` interface defines all the configurable options you can 
 - **Description**: Configuration for the proxy API endpoints used to send and retrieve messages. It defines how the assistant communicates with your backend.
 
 - **Properties**:
-
   - `sendMessage` (APIUrlConfig): **Required to send messages**
-
     - `url` (string): The full URL endpoint for sending messages to the assistant. This is a `POST` endpoint that accepts user input.
     - `method` (HTTPMethods): The HTTP method to use for sending messages. Usually, `POST`.
 
@@ -302,7 +299,6 @@ const navigableai = new NavigableAI({
 - **Description**: This object contains default values for the chat window, including visual and messaging options.
 
 - **Properties**:
-
   - `error` (string): The error message displayed if the API request fails.
   - `title` (string): The title of the chat window, which appears at the top. Default is "Assistant".
   - `inputPlaceholder` (string): Placeholder text for the input field.
@@ -483,7 +479,7 @@ The default implementation retrieves the last 20 messages for the user. It requi
 
 ```typescript
 navigableai.api.getMessages.request = (
-  identifier: string
+  identifier: string,
 ): Promise<{ data: IChatGetMessageResponse } | null> => {
   return this.request({
     method: this.api.getMessages.method as HTTPMethods,
@@ -500,7 +496,7 @@ The default implementation sends a user message along with additional data if ne
 ```typescript
 navigableai.api.sendMessage.request = async (
   message: string,
-  body: Record<string, any> = {}
+  body: Record<string, any> = {},
 ): Promise<{ data: IChatSendMessageResponse } | null> => {
   return await this.request({
     method: this.api.sendMessage.method as HTTPMethods,

@@ -35,11 +35,11 @@ Get started with the minimal setup.
    ```html
    <script
      type="module"
-     src="https://www.navigable.ai/sdk-web/0.9.9/main/index.js"
+     src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.9/main/index.js"
    ></script>
    <script
      type="module"
-     src="https://www.navigable.ai/sdk-web/0.9.9/main/adapters/ChatProvider/navigable/navigable.js"
+     src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.9/main/adapters/ChatProvider/navigable/navigable.js"
    ></script>
    ```
 
@@ -87,7 +87,7 @@ Note the name change: `initAiChatWidget` is `injectAiChatWidget` if you are impo
 
 If you're looking to connect via your Navigable AI proxy server, refer to the [NavigableProxyChatProvider](https://github.com/techorionai/ai-chat-widget/blob/master/main-script/src/adapters/ChatProvider/navigableProxy/README.md).
 
-Note: The default NavigableChatProvider implements all required methods (`listSessions`, `createSession`, `listSessionMessages`, `sendMessage`) and is intended for use with [Navigable AI](https://www.navigable.ai/). For building custom providers, [see the sections below](#implementing-a-custom-chatprovider-connect-to-any-llm).
+Note: The default NavigableChatProvider implements all required methods (`listSessions`, `createSession`, `listSessionMessages`, `sendMessage`) and is intended for use with [Navigable AI](https://navigable-ai-production-r7qp8.ondigitalocean.app/). For building custom providers, [see the sections below](#implementing-a-custom-chatprovider-connect-to-any-llm).
 
 ## Theme and Color Customization
 
@@ -183,11 +183,11 @@ Include the main script in your HTML and initialize the widget:
 ```html
 <script
   type="module"
-  src="https://www.navigable.ai/sdk-web/0.9.9/main/index.js"
+  src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.9/main/index.js"
 ></script>
 <script
   type="module"
-  src="https://www.navigable.ai/sdk-web/0.9.9/main/adapters/ChatProvider/navigable/navigable.js"
+  src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.9/main/adapters/ChatProvider/navigable/navigable.js"
 ></script>
 <script>
   initAiChatWidget({
@@ -229,7 +229,10 @@ initAiChatWidget({
     },
     header: {
       avatars: [
-        { name: "Navigable AI", url: "https://www.navigable.ai/logo/64.png" },
+        {
+          name: "Navigable AI",
+          url: "https://navigable-ai-production-r7qp8.ondigitalocean.app/logo/64.png",
+        },
       ],
       maxShownAvatars: 2,
       title: { title: "Support", showOnlineSubtitle: true },
@@ -248,12 +251,14 @@ initAiChatWidget({
   }),
   actionsMap: {
     // "Go to Support Portal": () => alert("Navigating..."),
-    // "Go to Support Portal": "https://www.navigable.ai/contact-us",
+    // "Go to Support Portal": "https://navigable-ai-production-r7qp8.ondigitalocean.app/contact-us",
   },
   homeScreenConfig: {
     bgColor: { type: "custom", background: "linear-gradient(...)" },
-    logoUrl: "https://www.navigable.ai/banner-transparent-bg.png",
-    logoUrlDark: "https://www.navigable.ai/logo/64.png",
+    logoUrl:
+      "https://navigable-ai-production-r7qp8.ondigitalocean.app/banner-transparent-bg.png",
+    logoUrlDark:
+      "https://navigable-ai-production-r7qp8.ondigitalocean.app/logo/64.png",
     headerContainerProps: { mb: "2rem" },
     additionalCards: [
       {
@@ -313,7 +318,6 @@ The widget is configured via a `ChatWidgetConfig` object. Key options:
 - **homeScreenConfig**: Configure home screen (background, logo, avatars, cards, header container props).
 - **sessionsListConfig**: Customize chat sessions list (title, new session button).
 - **footerConfig**: Configure the footer shown on the home and sessions list screens.
-
   - `containerProps`: Mantine [PaperProps](https://mantine.dev/core/paper/) for styling the footer container.
   - `home`: Configuration for the home tab (see below).
   - `messages`: Configuration for the messages tab (see below).

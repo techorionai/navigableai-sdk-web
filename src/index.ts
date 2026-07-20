@@ -8,7 +8,7 @@ type HTTPMethods =
   | "OPTIONS";
 
 type AgentFunction = (
-  args?: Record<string, any>
+  args?: Record<string, any>,
 ) =>
   | Promise<string | boolean>
   | ((args?: Record<string, any>) => string | boolean);
@@ -194,7 +194,7 @@ interface NavigableAIOptions {
 }
 
 const ENDPOINTS = {
-  CHAT: "https://www.navigable.ai/api/embed/v1/chat",
+  CHAT: "https://navigable-ai-production-r7qp8.ondigitalocean.app/api/embed/v1/chat",
 };
 
 class NavigableAI {
@@ -247,7 +247,7 @@ class NavigableAI {
 
       el.classList.remove(
         "ai-chat-window-widget-button-bottom-left",
-        "ai-chat-window-widget-button-bottom-right"
+        "ai-chat-window-widget-button-bottom-right",
       );
       el.classList.add(`ai-chat-window-widget-button-${this.widget.position}`);
 
@@ -325,7 +325,7 @@ class NavigableAI {
     get: () => {
       if (this.chatWindow.id) {
         return document.getElementById(
-          this.chatWindow.id
+          this.chatWindow.id,
         ) as HTMLDivElement | null;
       }
       return null;
@@ -341,9 +341,8 @@ class NavigableAI {
 
         return (
           new Date(
-            this.chatWindow.messages[
-              this.chatWindow.messages.length - 1
-            ].createdAt
+            this.chatWindow.messages[this.chatWindow.messages.length - 1]
+              .createdAt,
           ).getTime() <
           new Date().getTime() - 3600000
         );
@@ -373,7 +372,7 @@ class NavigableAI {
           : "white-space: pre-wrap";
 
         const validWelcomeActions = this.welcomeActions?.filter(
-          (action) => this.actions[action]
+          (action) => this.actions[action],
         );
 
         return `
@@ -385,7 +384,7 @@ class NavigableAI {
                       ? `<br/>${validWelcomeActions
                           .map(
                             (action) =>
-                              `<button class="ai-chat-window-message-action" aria-label="${action}" data-ai-chat-window-message-action="${action}">${action}</button>`
+                              `<button class="ai-chat-window-message-action" aria-label="${action}" data-ai-chat-window-message-action="${action}">${action}</button>`,
                           )
                           .join("")}`
                       : ""
@@ -444,8 +443,8 @@ class NavigableAI {
                             : ""
                         } </div>`
                       : message.sender === "ASSISTANT-LOADING"
-                      ? this.chatWindow.defaults.loader
-                      : `<p aria-label="${message.sender} ${message.content}">${this.chatWindow.defaults.error}</p>`
+                        ? this.chatWindow.defaults.loader
+                        : `<p aria-label="${message.sender} ${message.content}">${this.chatWindow.defaults.error}</p>`
                   }   
                 </div>
                 `;
@@ -523,7 +522,7 @@ class NavigableAI {
         if (messageForm) {
           messageForm.removeEventListener(
             "click",
-            this.chatWindow.messageForm.onsubmit
+            this.chatWindow.messageForm.onsubmit,
           );
         }
 
@@ -531,17 +530,17 @@ class NavigableAI {
         if (messageInput) {
           messageInput.removeEventListener(
             "keydown",
-            this.chatWindow.messageInput.submitOnEnter
+            this.chatWindow.messageInput.submitOnEnter,
           );
         }
 
         const actionButtons = el.querySelectorAll(
-          "[data-ai-chat-window-message-action]"
+          "[data-ai-chat-window-message-action]",
         ) as NodeListOf<HTMLButtonElement> | null;
         if (actionButtons) {
           actionButtons.forEach((button) => {
             const actionName = button.getAttribute(
-              "data-ai-chat-window-message-action"
+              "data-ai-chat-window-message-action",
             );
             if (actionName && this.actions[actionName]) {
               button.removeEventListener("click", () => {
@@ -567,7 +566,7 @@ class NavigableAI {
         if (messageForm) {
           messageForm.addEventListener(
             "submit",
-            this.chatWindow.messageForm.onsubmit
+            this.chatWindow.messageForm.onsubmit,
           );
         }
 
@@ -575,17 +574,17 @@ class NavigableAI {
         if (messageInput) {
           messageInput.addEventListener(
             "keydown",
-            this.chatWindow.messageInput.submitOnEnter
+            this.chatWindow.messageInput.submitOnEnter,
           );
         }
 
         const actionButtons = el.querySelectorAll(
-          "[data-ai-chat-window-message-action]"
+          "[data-ai-chat-window-message-action]",
         ) as NodeListOf<HTMLButtonElement> | null;
         if (actionButtons) {
           actionButtons.forEach((button) => {
             const actionName = button.getAttribute(
-              "data-ai-chat-window-message-action"
+              "data-ai-chat-window-message-action",
             );
             if (actionName && this.actions[actionName]) {
               button.addEventListener("click", () => {
@@ -603,7 +602,7 @@ class NavigableAI {
           return null;
         }
         return el.querySelector(
-          ".ai-chat-window-messages"
+          ".ai-chat-window-messages",
         ) as HTMLDivElement | null;
       },
     },
@@ -614,7 +613,7 @@ class NavigableAI {
           return null;
         }
         return el.querySelector(
-          ".ai-chat-window-header-close"
+          ".ai-chat-window-header-close",
         ) as HTMLButtonElement | null;
       },
     },
@@ -625,13 +624,13 @@ class NavigableAI {
           return null;
         }
         return el.querySelector(
-          ".ai-chat-window-input-field"
+          ".ai-chat-window-input-field",
         ) as HTMLTextAreaElement | null;
       },
       set: (value?: string) => {
         if (!value) {
           this.console.error(
-            "No value provided to messageInput.set(value: string)"
+            "No value provided to messageInput.set(value: string)",
           );
           return null;
         }
@@ -657,7 +656,7 @@ class NavigableAI {
           return null;
         }
         return el.querySelector(
-          "#ai-chat-window-input-form"
+          "#ai-chat-window-input-form",
         ) as HTMLFormElement | null;
       },
       onsubmit: () => {
@@ -759,7 +758,7 @@ class NavigableAI {
         message: string,
         options?: {
           functionCallId?: string;
-        }
+        },
       ) => {
         if (!message) {
           throw new Error("Message is required");
@@ -797,14 +796,14 @@ class NavigableAI {
         const configuredActions = Object.keys(this.actions).filter(
           (action) =>
             typeof this.actions[action] === "function" ||
-            typeof this.actions[action] === "string"
+            typeof this.actions[action] === "string",
         );
         if (configuredActions.length) {
           body.configuredActions = configuredActions;
         }
         const configuredFunctions = Object.keys(this.agentFunctions).filter(
           (functionName) =>
-            typeof this.agentFunctions[functionName] === "function"
+            typeof this.agentFunctions[functionName] === "function",
         );
         if (configuredFunctions.length) {
           body.configuredFunctions = configuredFunctions;
@@ -866,7 +865,7 @@ class NavigableAI {
       },
       request: async (
         message: string,
-        body: Record<string, any> = {}
+        body: Record<string, any> = {},
       ): Promise<{ data: IChatSendMessageResponse } | null> => {
         return await this.request({
           method: this.api.sendMessage.method as HTTPMethods,
@@ -891,7 +890,7 @@ class NavigableAI {
 
         if (!res || !res.data || !res.data.data) {
           this.console.error(
-            `Failed to get messages for identifier ${this.identifier}.`
+            `Failed to get messages for identifier ${this.identifier}.`,
           );
           return null;
         }
@@ -913,7 +912,7 @@ class NavigableAI {
         return data.data;
       },
       request: (
-        identifier: string
+        identifier: string,
       ): Promise<{ data: IChatGetMessageResponse } | null> => {
         return this.request({
           method: this.api.getMessages.method as HTTPMethods,
@@ -977,14 +976,14 @@ class NavigableAI {
   public generateSignature = async (payload: string) => {
     if (!this.sharedSecretKeyConfig) {
       this.console.error(
-        "sharedSecretKeyConfig is not set. Please set sharedSecretKeyConfig while initializing NavigableAI."
+        "sharedSecretKeyConfig is not set. Please set sharedSecretKeyConfig while initializing NavigableAI.",
       );
       return null;
     }
     try {
       const encoder = new TextEncoder();
       const keyBuffer = encoder.encode(
-        this.sharedSecretKeyConfig.sharedSecretKey
+        this.sharedSecretKeyConfig.sharedSecretKey,
       );
       const payloadBuffer = encoder.encode(payload);
 
@@ -993,7 +992,7 @@ class NavigableAI {
         keyBuffer,
         { name: "HMAC", hash: "SHA-256" },
         false,
-        ["sign"]
+        ["sign"],
       );
 
       const signature = await crypto.subtle.sign("HMAC", key, payloadBuffer);
@@ -1035,7 +1034,7 @@ class NavigableAI {
           headers[this.sharedSecretKeyConfig.key] = signature;
         } else {
           throw new Error(
-            `Invalid placement for shared secret key. Placement must be 'query', 'header', or 'body'. Found: ${this.sharedSecretKeyConfig.placement}`
+            `Invalid placement for shared secret key. Placement must be 'query', 'header', or 'body'. Found: ${this.sharedSecretKeyConfig.placement}`,
           );
         }
       }
@@ -1069,7 +1068,7 @@ class NavigableAI {
     set: (key: string, value: any) => {
       localStorage.setItem(
         this.encoder.base64.encode(key),
-        this.encoder.base64.encode(JSON.stringify(value))
+        this.encoder.base64.encode(JSON.stringify(value)),
       );
     },
     get: (key: string) => {
