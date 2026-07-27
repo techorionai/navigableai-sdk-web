@@ -194,7 +194,7 @@ interface NavigableAIOptions {
 }
 
 const ENDPOINTS = {
-  CHAT: "https://navigable-ai-production-r7qp8.ondigitalocean.app/api/embed/v1/chat",
+  CHAT: "https://navigable.techorionai.com/api/embed/v1/chat",
 };
 
 class NavigableAI {

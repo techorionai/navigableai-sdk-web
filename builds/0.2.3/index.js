@@ -41,8 +41,7 @@
       r((n = n.apply(t, e || [])).next());
     });
   };
-  const i =
-    "https://navigable-ai-production-r7qp8.ondigitalocean.app/api/embed/v1/chat";
+  const i = "https://navigable.techorionai.com/api/embed/v1/chat";
   class n {
     constructor(t) {
       if (

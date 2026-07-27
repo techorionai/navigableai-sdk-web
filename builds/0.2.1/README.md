@@ -24,14 +24,14 @@ To get started, include the required files in your project:
 ```html
 <link
   rel="stylesheet"
-  href="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.2.1/styles.css"
+  href="https://navigable.techorionai.com/sdk-web/0.2.1/styles.css"
 />
 ```
 
 #### JavaScript
 
 ```html
-<script src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.2.1/index.js"></script>
+<script src="https://navigable.techorionai.com/sdk-web/0.2.1/index.js"></script>
 ```
 
 ---

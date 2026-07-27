@@ -35,11 +35,11 @@ Get started with the minimal setup.
    ```html
    <script
      type="module"
-     src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.7/main/index.js"
+     src="https://navigable.techorionai.com/sdk-web/0.9.7/main/index.js"
    ></script>
    <script
      type="module"
-     src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.7/main/adapters/ChatProvider/navigable/navigable.js"
+     src="https://navigable.techorionai.com/sdk-web/0.9.7/main/adapters/ChatProvider/navigable/navigable.js"
    ></script>
    ```
 
@@ -87,7 +87,7 @@ Note the name change: `initAiChatWidget` is `injectAiChatWidget` if you are impo
 
 If you're looking to connect via your Navigable AI proxy server, refer to the [NavigableProxyChatProvider](https://github.com/techorionai/ai-chat-widget/blob/master/main-script/src/adapters/ChatProvider/navigableProxy/README.md).
 
-Note: The default NavigableChatProvider implements all required methods (`listSessions`, `createSession`, `listSessionMessages`, `sendMessage`) and is intended for use with [Navigable AI](https://navigable-ai-production-r7qp8.ondigitalocean.app/). For building custom providers, [see the sections below](#implementing-a-custom-chatprovider-connect-to-any-llm).
+Note: The default NavigableChatProvider implements all required methods (`listSessions`, `createSession`, `listSessionMessages`, `sendMessage`) and is intended for use with [Navigable AI](https://navigable.techorionai.com/). For building custom providers, [see the sections below](#implementing-a-custom-chatprovider-connect-to-any-llm).
 
 ## Theme and Color Customization
 
@@ -183,11 +183,11 @@ Include the main script in your HTML and initialize the widget:
 ```html
 <script
   type="module"
-  src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.7/main/index.js"
+  src="https://navigable.techorionai.com/sdk-web/0.9.7/main/index.js"
 ></script>
 <script
   type="module"
-  src="https://navigable-ai-production-r7qp8.ondigitalocean.app/sdk-web/0.9.7/main/adapters/ChatProvider/navigable/navigable.js"
+  src="https://navigable.techorionai.com/sdk-web/0.9.7/main/adapters/ChatProvider/navigable/navigable.js"
 ></script>
 <script>
   initAiChatWidget({
@@ -231,7 +231,7 @@ initAiChatWidget({
       avatars: [
         {
           name: "Navigable AI",
-          url: "https://navigable-ai-production-r7qp8.ondigitalocean.app/logo/64.png",
+          url: "https://navigable.techorionai.com/logo/64.png",
         },
       ],
       maxShownAvatars: 2,
@@ -251,14 +251,12 @@ initAiChatWidget({
   }),
   actionsMap: {
     // "Go to Support Portal": () => alert("Navigating..."),
-    // "Go to Support Portal": "https://navigable-ai-production-r7qp8.ondigitalocean.app/contact-us",
+    // "Go to Support Portal": "https://navigable.techorionai.com/contact-us",
   },
   homeScreenConfig: {
     bgColor: { type: "custom", background: "linear-gradient(...)" },
-    logoUrl:
-      "https://navigable-ai-production-r7qp8.ondigitalocean.app/banner-transparent-bg.png",
-    logoUrlDark:
-      "https://navigable-ai-production-r7qp8.ondigitalocean.app/logo/64.png",
+    logoUrl: "https://navigable.techorionai.com/banner-transparent-bg.png",
+    logoUrlDark: "https://navigable.techorionai.com/logo/64.png",
     headerContainerProps: { mb: "2rem" },
     additionalCards: [
       {
