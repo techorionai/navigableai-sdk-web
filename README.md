@@ -24,14 +24,14 @@ To get started, include the required files in your project:
 ```html
 <link
   rel="stylesheet"
-  href="https://navigable.techorionai.com/sdk-web/0.2.4/styles.css"
+  href="https://chat.techorionai.com/builds/0.2.4/styles.css"
 />
 ```
 
 #### JavaScript
 
 ```html
-<script src="https://navigable.techorionai.com/sdk-web/0.2.4/index.js"></script>
+<script src="https://chat.techorionai.com/builds/0.2.4/index.js"></script>
 ```
 
 ---
